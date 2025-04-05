@@ -1,15 +1,14 @@
-import { Button, Container, Typography } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Users from './pages/Users';
 
 function App() {
   return (
-    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to FinFlow 💰
-      </Typography>
-      <Button variant="contained" color="primary">
-        Track Your Expenses easily with FinFlow
-      </Button>
-    </Container>
+    <Router>
+      <Routes>
+        <Route path="/" element={<div>Home Page</div>} />
+        <Route path="/users" element={<Users />} />
+      </Routes>
+    </Router>
   );
 }
 
