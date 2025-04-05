@@ -7,7 +7,7 @@ function App() {
         Welcome to FinFlow 💰
       </Typography>
       <Button variant="contained" color="primary">
-        Track Your Expenses
+        Track Your Expenses easily with FinFlow
       </Button>
     </Container>
   );
