@@ -1,0 +1,56 @@
+import React from 'react';
+import {
+  PieChart, Pie, Cell, Tooltip,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer
+} from 'recharts';
+import { Box, Typography, Paper } from '@mui/material';
+
+const dummyData = [
+  { category: 'Food', Amount: 120 },
+  { category: 'Transport', Amount: 80 },
+  { category: 'Entertainment', Amount: 150 },
+  { category: 'Health', Amount: 90 },
+  { category: 'Rent', Amount: 300 },
+];
+
+const COLORS = ['#130037', '#6a1b9a', '#9c27b0', '#ab47bc', '#ce93d8'];
+
+const SpendingCharts = () => {
+  return (
+    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 2 }}>
+
+      <Paper sx={{ p: 2}}>
+        <Typography variant="h4" gutterBottom>Category wise spending</Typography>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={dummyData}
+              dataKey="Amount"
+              nameKey="category"
+              outerRadius={100}
+              fill="#130037"
+              label
+            >
+              {dummyData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+       <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={dummyData}>
+            <CartesianGrid strokeDasharray="4 4" />
+            <XAxis dataKey="category" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="Amount" fill="#130037" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Paper>
+    </Box>
+  );
+};
+
+export default SpendingCharts;

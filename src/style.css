@@ -24,6 +24,8 @@ body {
 .MuiPaper-root {
   background-color: var(--color-primary) !important;
   color: var(--color-secondary) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .MuiTypography-root {

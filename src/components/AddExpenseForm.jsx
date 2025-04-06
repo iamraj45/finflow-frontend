@@ -68,12 +68,11 @@ const AddExpenseForm = () => {
 
             if (response.data.status === true) {
                 alert("Expense added successfully!");
-
-                // Clear form fields
                 setAmount("");
                 setCategoryId("");
                 setDescription("");
                 setDate("");
+                onclose();
             } else {
                 alert("Failed to add expense!");
             }
@@ -93,10 +92,10 @@ const AddExpenseForm = () => {
                 width: '80%',
                 maxWidth: { xs: '80%', sm: 400, md: 500 },
                 mx: 'auto',
-                mt: { xs: 3, md: 5 },
+                boxShadow: 'none',
             }}>
                 <Typography variant="h5" gutterBottom sx={{ color: '##140038', fontWeight: 'bold', fontFamily: 'sans-serif' }}>Add New Expense</Typography>
-                <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
                     <TextField
                         label="Amount"
                         type="number"
