@@ -1,17 +1,29 @@
 import { Link } from "react-router-dom";
-import AddExpenseForm from "../components/AddExpenseForm";
+import { Box, useMediaQuery } from '@mui/material';
+import MyExpenses from "../components/MyExpenses.jsx";
+import SpendingCharts from "../components/SpendingCharts.jsx";
 
 export default function Home() {
-  return (
-    <div className="mb-6 homepage-wrapper">
-      <h1 className="font-bold mb-4">FinFlow - Your personal expense tracker</h1>
-      <Link to="/users">
-        <button className="mb-12 bg-gray-300 rounded hover:bg-gray-400">
-          View Users
-        </button>
-      </Link>
+  const isMobile = useMediaQuery('(max-width:768px)');
 
-      <AddExpenseForm />
-    </div>
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: 4,
+        p: 2,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+      }}
+    >
+      <Box sx={{ flex: 1, minWidth: '400px' }}>
+        <MyExpenses />
+      </Box>
+
+      <Box sx={{ flex: 1, minWidth: '400px' }}>
+        <SpendingCharts />
+      </Box>
+    </Box>
   );
 }
