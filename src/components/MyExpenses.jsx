@@ -64,7 +64,7 @@ const MyExpenses = () => {
                             secondary={expense.description}
                         />
                         <Typography variant="caption" color="textSecondary">
-                            {new Date(expense.date).toLocaleDateString()}
+                            {new Date(expense.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </Typography>
                     </ListItem>
                 ))}
