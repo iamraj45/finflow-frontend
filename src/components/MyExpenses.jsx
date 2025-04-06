@@ -36,8 +36,8 @@ const MyExpenses = () => {
                             primary={`${expense.category}: ₹${expense.amount}`}
                             secondary={`${expense.description}`}
                         />
-                        <Typography variant="caption" color="textSecondary"/>
-                            {new Date(expense.date).toLocaleDateString()}
+                        <Typography variant="caption" color="textSecondary" />
+                        {new Date(expense.date).toLocaleDateString()}
                     </ListItem>
                 ))}
             </List>
@@ -70,11 +70,17 @@ const MyExpenses = () => {
                     p: 3,
                     borderRadius: 2
                 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ml: 4 }}>
+                        <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
+                            <Typography variant="h5" sx={{ color: '#130037', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
+                                Add New Expense
+                            </Typography>
+                        </Box>
                         <IconButton onClick={handleClose}>
                             <CloseIcon />
                         </IconButton>
                     </Box>
+
                     <AddExpenseForm onClose={handleClose} />
                 </Paper>
             </Modal>

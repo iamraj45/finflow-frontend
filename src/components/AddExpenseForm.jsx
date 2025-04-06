@@ -12,21 +12,8 @@ import {
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-
-const categories = [
-    { id: 1, name: 'Food' },
-    { id: 2, name: 'Transport' },
-    { id: 3, name: 'Utilities' },
-    { id: 4, name: 'Entertainment' },
-    { id: 5, name: 'Health' },
-    { id: 6, name: 'Groceries' },
-    { id: 7, name: 'Shopping' },
-    { id: 8, name: 'Education' },
-    { id: 9, name: 'Travel' },
-    { id: 10, name: 'Rent' },
-    { id: 11, name: 'Subscriptions' },
-    { id: 12, name: 'Others' },
-];
+import { useContext } from 'react';
+import { CategoryContext } from '../context/CategoryContext';
 
 const AddExpenseForm = () => {
     const [amount, setAmount] = useState('');
@@ -38,6 +25,8 @@ const AddExpenseForm = () => {
     const [snackbarMsg, setSnackbarMsg] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
+    const { categories } = useContext(CategoryContext);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -45,7 +34,7 @@ const AddExpenseForm = () => {
 
         const expenseData = {
             id: 0,
-            userId: 9,
+            userId: 9, // Replace with actual user ID using session context later
             categoryId: categoryId,
             amount: parseFloat(amount),
             description,
@@ -84,7 +73,6 @@ const AddExpenseForm = () => {
         }
     };
 
-
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Paper elevation={6} sx={{
@@ -94,7 +82,6 @@ const AddExpenseForm = () => {
                 mx: 'auto',
                 boxShadow: 'none',
             }}>
-                <Typography variant="h5" gutterBottom sx={{ color: '##140038', fontWeight: 'bold', fontFamily: 'sans-serif' }}>Add New Expense</Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
                     <TextField
                         label="Amount"
