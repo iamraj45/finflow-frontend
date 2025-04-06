@@ -1,0 +1,91 @@
+/* index.css */
+
+:root {
+  --color-primary: #ffffff;
+  --color-secondary: #140038  ;
+  --color-input-bg: #f9f9f9;
+  --color-button-text: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+}
+
+.homepage-wrapper {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-color: var(--color-primary);
+}
+
+.MuiPaper-root {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+}
+
+.MuiTypography-root {
+  color: var(--color-secondary);
+}
+
+.MuiTextField-root input,
+.MuiInputLabel-root,
+.MuiSelect-select {
+  color: var(--color-secondary) !important;
+}
+
+.MuiOutlinedInput-root {
+  background-color: var(--color-input-bg);
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-secondary) !important;
+}
+
+.MuiInputBase-input {
+  color: var(--color-secondary) !important;
+}
+
+.MuiSelect-icon {
+  color: var(--color-secondary) !important;
+}
+
+.MuiButton-root {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-button-text) !important;
+}
+
+.MuiMenu-paper {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+}
+
+.MuiPickersDay-root {
+  color: var(--color-secondary) !important;
+}
+
+.MuiPickersDay-today {
+  border: 1px solid var(--color-secondary) !important;
+}
+
+.MuiDialog-paper {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+}
+
+.MuiAlert-root {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-button-text) !important;
+}
+
+/* Remove arrows from number inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
