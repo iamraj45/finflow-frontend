@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Box,
     Typography,
@@ -8,36 +8,64 @@ import {
     Paper,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import AddExpenseForm from './AddExpenseForm';
-
-const dummyExpenses = [
-    { id: 1, category: "Food", amount: 120, description: "Lunch", date: "2024-04-06" },
-    { id: 2, category: "Transport", amount: 50, description: "Bus fare", date: "2024-04-05" },
-];
+import axios from 'axios';
+import { CategoryContext } from '../context/CategoryContext';
 
 const MyExpenses = () => {
     const [open, setOpen] = useState(false);
+    const [expenses, setExpenses] = useState([]);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const userId = 6; // This can be passed via props or context later
+    const { categories } = useContext(CategoryContext);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const fetchExpenses = async () => {
+        try {
+            const response = await axios.get(`https://expense-tracker-hoj5.onrender.com/api/unsecure/expenses/getExpenses?userId=${userId}`);
+            setExpenses(response.data);
+        } catch (error) {
+            console.error("Failed to fetch expenses:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchExpenses();
+    }, [userId]);
+
+    const getCategoryName = (id) => {
+        const category = categories.find(cat => cat.id === id);
+        return category ? category.name : 'Unknown';
+    };
+
+    const handleExpenseAdded = () => {
+        handleClose();
+        fetchExpenses();
+        setSnackbarOpen(true);
+    };
 
     return (
         <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 2 }}>
             <Typography variant="h4" gutterBottom>My Expenses</Typography>
 
             <List sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
-                {dummyExpenses.map((expense) => (
+                {expenses.map((expense) => (
                     <ListItem key={expense.id} divider>
                         <ListItemText
-                            primary={`${expense.category}: ₹${expense.amount}`}
-                            secondary={`${expense.description}`}
+                            primary={`${getCategoryName(expense.categoryId)}: ₹${expense.amount}`}
+                            secondary={expense.description}
                         />
-                        <Typography variant="caption" color="textSecondary" />
-                        {new Date(expense.date).toLocaleDateString()}
+                        <Typography variant="caption" color="textSecondary">
+                            {new Date(expense.date).toLocaleDateString()}
+                        </Typography>
                     </ListItem>
                 ))}
             </List>
@@ -70,7 +98,7 @@ const MyExpenses = () => {
                     p: 3,
                     borderRadius: 2
                 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', ml: 4 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
                         <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
                             <Typography variant="h5" sx={{ color: '#130037', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
                                 Add New Expense
@@ -81,9 +109,20 @@ const MyExpenses = () => {
                         </IconButton>
                     </Box>
 
-                    <AddExpenseForm onClose={handleClose} />
+                    <AddExpenseForm onSuccess={handleExpenseAdded} />
                 </Paper>
             </Modal>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
+                    Expense added successfully!
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

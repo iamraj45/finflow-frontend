@@ -15,7 +15,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useContext } from 'react';
 import { CategoryContext } from '../context/CategoryContext';
 
-const AddExpenseForm = () => {
+const AddExpenseForm = ({onSuccess}) => {
     const [amount, setAmount] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [description, setDescription] = useState('');
@@ -34,7 +34,7 @@ const AddExpenseForm = () => {
 
         const expenseData = {
             id: 0,
-            userId: 9, // Replace with actual user ID using session context later
+            userId: 6, // Replace with actual user ID using session context later
             categoryId: categoryId,
             amount: parseFloat(amount),
             description,
@@ -56,12 +56,13 @@ const AddExpenseForm = () => {
             );
 
             if (response.data.status === true) {
-                alert("Expense added successfully!");
                 setAmount("");
                 setCategoryId("");
                 setDescription("");
-                setDate("");
-                onclose();
+                setDate(new Date());
+                if (onSuccess) {
+                    onSuccess(); // This will close the modal and refresh expenses
+                }
             } else {
                 alert("Failed to add expense!");
             }
