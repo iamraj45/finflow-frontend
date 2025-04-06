@@ -51,7 +51,7 @@ const AddExpenseForm = ({onSuccess}) => {
 
         try {
             const response = await axios.post(
-                "http://localhost:8080/api/unsecure/expenses/addExpense",
+                "https://expense-tracker-hoj5.onrender.com/api/unsecure/expenses/addExpense",
                 expenseData
             );
 

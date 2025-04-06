@@ -30,7 +30,7 @@ const MyExpenses = () => {
 
     const fetchExpenses = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/unsecure/expenses/getExpenses?userId=${userId}`);
+            const response = await axios.get(`https://expense-tracker-hoj5.onrender.com/api/unsecure/expenses/getExpenses?userId=${userId}`);
             setExpenses(response.data);
         } catch (error) {
             console.error("Failed to fetch expenses:", error);
