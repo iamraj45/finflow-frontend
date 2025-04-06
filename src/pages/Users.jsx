@@ -1,4 +1,3 @@
-// src/pages/Users.jsx
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -35,7 +34,7 @@ const Users = () => {
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       <Typography variant="h4" gutterBottom>
-        Users List
+        All Users List
       </Typography>
 
       {loading ? (
