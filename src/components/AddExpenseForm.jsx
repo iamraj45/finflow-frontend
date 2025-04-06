@@ -53,7 +53,9 @@ const AddExpenseForm = () => {
         };
 
         if (date > new Date()) {
-            alert("You cannot add an expense for a future date.");
+            setSnackbarMsg("You cannot add an expense for a future date.");
+            setSnackbarSeverity("warning");
+            setSnackbarOpen(true);
             setLoading(false); // Stop loading
             return;
         }
@@ -86,8 +88,14 @@ const AddExpenseForm = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Paper elevation={3} sx={{ p: 4, maxWidth: 500, mx: 'auto', mt: 5 }}>
-                <Typography variant="h5" gutterBottom>Add New Expense</Typography>
+            <Paper elevation={6} sx={{
+                p: { xs: 2, sm: 3, md: 4 },
+                width: '80%',
+                maxWidth: { xs: '80%', sm: 400, md: 500 },
+                mx: 'auto',
+                mt: { xs: 3, md: 5 },
+            }}>
+                <Typography variant="h5" gutterBottom sx={{ color: '##140038', fontWeight: 'bold', fontFamily: 'sans-serif' }}>Add New Expense</Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <TextField
                         label="Amount"
@@ -96,6 +104,7 @@ const AddExpenseForm = () => {
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         required
+                        InputLabelProps={{ required: false }}
                     />
                     <TextField
                         select
@@ -104,6 +113,7 @@ const AddExpenseForm = () => {
                         value={categoryId}
                         onChange={(e) => setCategoryId(e.target.value)}
                         required
+                        InputLabelProps={{ required: false }}
                     >
                         {categories.map((cat) => (
                             <MenuItem key={cat.id} value={cat.id}>
