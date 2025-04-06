@@ -52,6 +52,12 @@ const AddExpenseForm = () => {
             date: new Date(date).getTime(), // convert to epoch millis
         };
 
+        if (date > new Date()) {
+            alert("You cannot add an expense for a future date.");
+            setLoading(false); // Stop loading
+            return;
+        }
+
         try {
             const response = await axios.post(
                 "https://expense-tracker-hoj5.onrender.com/api/unsecure/expenses/addExpense",
@@ -117,6 +123,7 @@ const AddExpenseForm = () => {
                         label="Date"
                         value={date}
                         onChange={(newDate) => setDate(newDate)}
+                        maxDate={new Date()}
                         renderInput={(params) => <TextField {...params} fullWidth required />}
                     />
                     <Button
