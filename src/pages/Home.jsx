@@ -2,6 +2,7 @@ import { Box, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import MyExpenses from "../components/MyExpenses.jsx";
 import SpendingCharts from "../components/SpendingCharts.jsx";
+import Navbar from '../components/NavBar.jsx';
 
 export default function Home() {
   const isMobile = useMediaQuery('(max-width:768px)');
@@ -12,6 +13,8 @@ export default function Home() {
   };
 
   return (
+    <>
+    <Navbar/>
     <Box
       sx={{
         display: 'flex',
@@ -30,5 +33,6 @@ export default function Home() {
         <SpendingCharts refresh={refreshCharts} />
       </Box>
     </Box>
+    </>
   );
 }
