@@ -34,7 +34,7 @@ const AddExpenseForm = ({onSuccess}) => {
 
         const expenseData = {
             id: 0,
-            userId: 6, // Replace with actual user ID using session context later
+            userId: 8, // Replace with actual user ID using session context later
             categoryId: categoryId,
             amount: parseFloat(amount),
             description,
@@ -49,9 +49,11 @@ const AddExpenseForm = ({onSuccess}) => {
             return;
         }
 
+        const apiUrl = import.meta.env.VITE_API_URL;
+
         try {
             const response = await axios.post(
-                "https://expense-tracker-hoj5.onrender.com/api/unsecure/expenses/addExpense",
+                `${apiUrl}/api/unsecure/expenses/addExpense`,
                 expenseData
             );
 
