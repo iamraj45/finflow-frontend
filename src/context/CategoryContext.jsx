@@ -5,11 +5,12 @@ export const CategoryContext = createContext();
 
 export const CategoryProvider = ({ children }) => {
     const [categories, setCategories] = useState([]);
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await axios.get("https://expense-tracker-hoj5.onrender.com/api/unsecure/getAllCategories");
+                const res = await axios.get(`${apiUrl}/api/unsecure/getAllCategories`);
                 setCategories(res.data);
             } catch (err) {
                 console.error("Error fetching categories", err);
