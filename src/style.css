@@ -21,11 +21,19 @@ body {
   background-color: var(--color-primary);
 }
 
-.MuiPaper-root {
+/* .MuiPaper-root {
   background-color: var(--color-primary) !important;
   color: var(--color-secondary) !important;
   box-shadow: none !important;
   padding: 15px 5px !important;
+} */
+
+.MuiPaper-root{
+  box-shadow: none !important;
+}
+
+.MuiToolbar-root{
+  padding: 0 16px 0 8px !important;
 }
 
 .MuiTypography-root {
