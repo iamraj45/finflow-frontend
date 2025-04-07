@@ -18,19 +18,20 @@ import AddExpenseForm from './AddExpenseForm';
 import axios from 'axios';
 import { CategoryContext } from '../context/CategoryContext';
 
-const MyExpenses = () => {
+const MyExpenses = ({ onExpenseAdded }) => {
     const [open, setOpen] = useState(false);
     const [expenses, setExpenses] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const userId = 6; // This can be passed via props or context later
+    const userId = 8; // This can be passed via props or context later
     const { categories } = useContext(CategoryContext);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     const fetchExpenses = async () => {
         try {
-            const response = await axios.get(`https://expense-tracker-hoj5.onrender.com/api/unsecure/expenses/getExpenses?userId=${userId}`);
+            const response = await axios.get(`${apiUrl}/api/unsecure/expenses/getExpenses?userId=${userId}`);
             setExpenses(response.data);
         } catch (error) {
             console.error("Failed to fetch expenses:", error);
@@ -49,8 +50,9 @@ const MyExpenses = () => {
     const handleExpenseAdded = () => {
         handleClose();
         fetchExpenses();
+        if (onExpenseAdded) onExpenseAdded(); // <-- notify Home.jsx
         setSnackbarOpen(true);
-    };
+    };    
 
     return (
         <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 2 }}>

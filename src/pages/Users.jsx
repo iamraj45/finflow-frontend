@@ -14,10 +14,11 @@ import {
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('https://expense-tracker-hoj5.onrender.com/api/unsecure/getUserData');
+      const res = await fetch(`${apiUrl}/api/unsecure/getUserData`);
       const data = await res.json();
       setUsers(data);
       setLoading(false);
