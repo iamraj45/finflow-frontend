@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Grid,
@@ -14,9 +14,26 @@ import {
 import { Google, Facebook, GitHub, LinkedIn } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import image from '../../assets/img.png';
+import { loginUser } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const theme = useTheme();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const handleLogin = async () => {
+        try {
+            const response = await loginUser({ email, password });
+            localStorage.setItem('token', response.data.token);
+            navigate('/'); // redirect to homepage or dashboard
+        } catch (err) {
+            console.error('Login failed:', err);
+            alert('Invalid credentials');
+        }
+    };
+
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
@@ -77,6 +94,8 @@ const Login = () => {
 
                     <TextField
                         label="Your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         variant="outlined"
                         fullWidth
                         margin="normal"
@@ -84,13 +103,16 @@ const Login = () => {
                     />
                     <TextField
                         label="Your password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         variant="outlined"
                         fullWidth
-                        type="password"
                         margin="normal"
                         InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
                     />
                     <Button
+                        onClick={handleLogin}
                         variant="contained"
                         fullWidth
                         sx={{

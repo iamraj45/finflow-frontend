@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { registerUser } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
+
 import {
   Box,
   Grid,
@@ -17,6 +20,20 @@ import image from '../../assets/img.png';
 
 const Register = () => {
   const theme = useTheme();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleRegister = async () => {
+    try {
+      await registerUser({ name, email, password });
+      navigate('/sign-in'); // redirect to login after success
+    } catch (err) {
+      console.error('Registration failed:', err);
+      alert('Something went wrong. Try again!');
+    }
+  };
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
@@ -74,6 +91,8 @@ const Register = () => {
 
           <TextField
             label="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             variant="outlined"
             fullWidth
             margin="normal"
@@ -81,6 +100,8 @@ const Register = () => {
           />
           <TextField
             label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             variant="outlined"
             fullWidth
             margin="normal"
@@ -88,9 +109,11 @@ const Register = () => {
           />
           <TextField
             label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
             fullWidth
-            type="password"
             margin="normal"
             InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
           />
@@ -100,6 +123,7 @@ const Register = () => {
             sx={{ mt: 1 }}
           />
           <Button
+            onClick={handleRegister}
             variant="contained"
             fullWidth
             sx={{
