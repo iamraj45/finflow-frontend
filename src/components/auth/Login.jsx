@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Grid,
@@ -21,9 +21,37 @@ const Login = () => {
     const theme = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
     const navigate = useNavigate();
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          navigate('/');
+        }
+      }, []);
 
     const handleLogin = async () => {
+        let isValid = true;
+        setEmailError('');
+        setPasswordError('');
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!email) {
+            setEmailError('Email is required');
+            isValid = false;
+        }
+        else if (!emailRegex.test(email)) {
+            setEmailError('Enter a valid email address');
+            isValid = false;
+        }
+        if (!password) {
+            setPasswordError('Password is required');
+            isValid = false;
+        }
+        if (!isValid) return;
         try {
             const response = await loginUser({ email, password });
             localStorage.setItem('token', response.data.token);
@@ -96,6 +124,8 @@ const Login = () => {
                         label="Your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        error={!!emailError}
+                        helperText={emailError}
                         variant="outlined"
                         fullWidth
                         margin="normal"
@@ -106,6 +136,8 @@ const Login = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        error={!!passwordError}
+                        helperText={passwordError}
                         variant="outlined"
                         fullWidth
                         margin="normal"

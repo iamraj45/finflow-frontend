@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registerUser } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,17 +23,74 @@ const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [agreed, setAgreed] = useState(false);
+  const [error, setError] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/');
+    }
+  }, []);
 
   const handleRegister = async () => {
+    setNameError('');
+    setEmailError('');
+    setPasswordError('');
+    setError('');
+    setSuccessMessage('');
+    setIsSubmitting(false);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let isValid = true;
+
+    if (!name) {
+      setNameError('Name is required');
+      isValid = false;
+    }
+
+    if (!email) {
+      setEmailError('Email is required');
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Enter a valid email address');
+      isValid = false;
+    }
+
+    if (!password) {
+      setPasswordError('Password is required');
+      isValid = false;
+    }
+
+    if (!agreed) {
+      setError('You must agree to the Terms & Conditions to proceed.');
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
     try {
+      setIsSubmitting(true);
       await registerUser({ name, email, password });
-      navigate('/sign-in'); // redirect to login after success
+      setSuccessMessage('Registration successful! Redirecting to login...');
+      setTimeout(() => {
+        navigate('/sign-in');
+      }, 3000);
     } catch (err) {
       console.error('Registration failed:', err);
       alert('Something went wrong. Try again!');
     }
+    finally {
+      setIsSubmitting(false);
+    }
   };
+
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
@@ -93,6 +150,8 @@ const Register = () => {
             label="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            error={!!nameError}
+            helperText={nameError}
             variant="outlined"
             fullWidth
             margin="normal"
@@ -101,6 +160,8 @@ const Register = () => {
           <TextField
             label="Email"
             value={email}
+            error={!!emailError}
+            helperText={emailError}
             onChange={(e) => setEmail(e.target.value)}
             variant="outlined"
             fullWidth
@@ -112,20 +173,41 @@ const Register = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={!!passwordError}
+            helperText={passwordError}
             variant="outlined"
             fullWidth
             margin="normal"
             InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
           />
           <FormControlLabel
-            control={<Checkbox />}
+            control={
+              <Checkbox
+                checked={agreed}
+                onChange={(e) => {
+                  setAgreed(e.target.checked);
+                  if (e.target.checked) setError('');
+                }}
+              />
+            }
             label="I agree to the Terms & Conditions"
             sx={{ mt: 1 }}
           />
+          {error && (
+            <Typography variant="body2" color="error" mt={1}>
+              {error}
+            </Typography>
+          )}
+          {successMessage && (
+            <Typography variant="body2" color="success.main" mt={1}>
+              {successMessage}
+            </Typography>
+          )}
           <Button
             onClick={handleRegister}
             variant="contained"
             fullWidth
+            disabled={isSubmitting}
             sx={{
               mt: 2,
               backgroundColor: 'var(--color-secondary)',
@@ -135,7 +217,7 @@ const Register = () => {
               },
             }}
           >
-            Sign Up
+            {isSubmitting ? 'Please wait...' : 'Sign Up'}
           </Button>
 
           <Divider sx={{ my: 2 }}>or</Divider>
