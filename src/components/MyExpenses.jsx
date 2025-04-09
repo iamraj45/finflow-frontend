@@ -43,6 +43,7 @@ const MyExpenses = ({ onExpenseAdded }) => {
     }, [userId]);
 
     const getCategoryName = (id) => {
+        if (!Array.isArray(categories)) return 'Loading...';    
         const category = categories.find(cat => cat.id === id);
         return category ? category.name : 'Unknown';
     };

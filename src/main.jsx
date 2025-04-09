@@ -6,8 +6,6 @@ import './style.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CategoryProvider>
       <App />
-    </CategoryProvider>
   </StrictMode>,
 )

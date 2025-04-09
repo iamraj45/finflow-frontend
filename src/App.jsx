@@ -4,26 +4,29 @@ import Home from './pages/Home';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import PrivateRoute from './components/common/PrivateRoute';
+import { CategoryProvider } from './context/CategoryContext';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
             <PrivateRoute>
-              <Home />
+              <CategoryProvider>
+                <Home />
+              </CategoryProvider>
             </PrivateRoute>
-          } 
+          }
         />
-        <Route 
-          path="/users" 
+        <Route
+          path="/users"
           element={
             <PrivateRoute>
               <Users />
             </PrivateRoute>
-          } 
+          }
         />
         <Route path="/sign-in" element={<Login />} />
         <Route path="/sign-up" element={<Register />} />
