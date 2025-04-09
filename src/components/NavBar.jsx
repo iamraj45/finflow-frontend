@@ -10,17 +10,30 @@ import {
   Avatar,
 } from '@mui/material';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import AppLogo from '../assets/logo.png'; // Replace with actual logo path
+import AppLogo from '../assets/logo.png'; 
+import { useNavigate } from 'react-router-dom'; 
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const menuOpen = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    // Remove the token
+    localStorage.removeItem("token");
+
+    // Close menu
+    handleMenuClose();
+
+    // Redirect to login page
+    navigate("/sign-in");
   };
 
   return (
@@ -56,7 +69,7 @@ const Navbar = () => {
           >
             <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Box>
       </Toolbar>
