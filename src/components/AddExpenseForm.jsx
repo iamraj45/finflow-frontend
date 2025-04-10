@@ -34,7 +34,7 @@ const AddExpenseForm = ({onSuccess}) => {
 
         const expenseData = {
             id: 0,
-            userId: 8, // Replace with actual user ID using session context later
+            userId: localStorage.getItem('userId'),
             categoryId: categoryId,
             amount: parseFloat(amount),
             description,

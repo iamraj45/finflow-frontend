@@ -36,6 +36,8 @@ const Navbar = () => {
     navigate("/sign-in");
   };
 
+  const userName = localStorage.getItem("userName");
+
   return (
     <AppBar position="static" sx={{ backgroundColor: '#130037' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -67,6 +69,7 @@ const Navbar = () => {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
+            <MenuItem onClick={handleMenuClose}>Hi, {userName}</MenuItem>
             <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>

@@ -21,7 +21,7 @@ const SpendingCharts = ({ refresh }) => {
   const [expenses, setExpenses] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [dateData, setDateData] = useState([]);
-  const userId = 8;
+  const userId = localStorage.getItem('userId');
   const { categories } = useContext(CategoryContext);
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -75,57 +75,65 @@ const SpendingCharts = ({ refresh }) => {
   }, [categories, refresh]);
 
   return (
-      <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2, borderRadius: 2 }}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="h4" gutterBottom sx={{mb:4}}>My Spendings</Typography>
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={categoryData}>
-              <CartesianGrid strokeDasharray="4 4" />
-              <XAxis dataKey="category" interval={0} angle={-30} textAnchor="end" height={80} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="amount" name="Amount">
-                {categoryData.map((entry, index) => (
-                  <Cell key={`cell-bar-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2, borderRadius: 2 }}>
+      {expenses.length === 0 ? (
+        <Typography variant="h5" color="textSecondary" sx={{ py: 5 }}>
+          No expenses found. Start by adding some to view your charts!
+        </Typography>
+      ) : (
+        <>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>My Spendings</Typography>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={categoryData}>
+                <CartesianGrid strokeDasharray="4 4" />
+                <XAxis dataKey="category" interval={0} angle={-30} textAnchor="end" height={80} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="amount" name="Amount">
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-bar-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
 
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={categoryData}
-                dataKey="percentage"
-                nameKey="category"
-                outerRadius={100}
-                fill="#130037"
-                label={({ percentage }) => `${percentage.toFixed(2)}%`}
-              >
-                {categoryData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
-            </PieChart>
-          </ResponsiveContainer>
-        </Paper>
-      
-        <Paper sx={{ p: 2}}>
-          <Typography variant="h4" gutterBottom>Spending Over Time</Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dateData}>
-              <CartesianGrid strokeDasharray="4 4" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="Amount" stroke="#6a1b9a" />
-            </LineChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Box>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  dataKey="percentage"
+                  nameKey="category"
+                  outerRadius={100}
+                  fill="#130037"
+                  label={({ percentage }) => `${percentage.toFixed(2)}%`}
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
+              </PieChart>
+            </ResponsiveContainer>
+          </Paper>
+
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h4" gutterBottom>Spending Over Time</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dateData}>
+                <CartesianGrid strokeDasharray="4 4" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="Amount" stroke="#6a1b9a" />
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
+        </>
+      )}
+    </Box>
   );
 };
 

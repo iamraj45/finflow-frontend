@@ -16,6 +16,7 @@ import { useTheme } from '@mui/material/styles';
 import image from '../../assets/img.png';
 import { loginUser } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; 
 
 const Login = () => {
     const theme = useTheme();
@@ -28,9 +29,9 @@ const Login = () => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-          navigate('/');
+            navigate('/');
         }
-      }, []);
+    }, []);
 
     const handleLogin = async () => {
         let isValid = true;
@@ -54,8 +55,19 @@ const Login = () => {
         if (!isValid) return;
         try {
             const response = await loginUser({ email, password });
-            localStorage.setItem('token', response.data.token);
-            navigate('/'); // redirect to homepage or dashboard
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+
+            const decoded = jwtDecode(token);
+            const userId = decoded.userId; 
+            const emailFromToken = decoded.email;
+            const userName = decoded.name;
+
+            localStorage.setItem('userId', userId);
+            localStorage.setItem('email', emailFromToken);
+            localStorage.setItem('userName', userName);
+
+            navigate('/'); // redirect to homepage
         } catch (err) {
             console.error('Login failed:', err);
             alert('Invalid credentials');
