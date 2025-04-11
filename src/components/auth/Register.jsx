@@ -77,7 +77,12 @@ const Register = () => {
 
     try {
       setIsSubmitting(true);
-      await registerUser({ name, email, password });
+      const response = await registerUser({ name, email, password });
+      if (response.data.status === false) {
+        setError(response.data.message);
+        setIsSubmitting(false);
+        return;
+      }
       setSuccessMessage('Registration successful! Redirecting to login...');
       setTimeout(() => {
         navigate('/sign-in');

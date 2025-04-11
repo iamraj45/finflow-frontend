@@ -22,7 +22,7 @@ const MyExpenses = ({ onExpenseAdded }) => {
     const [open, setOpen] = useState(false);
     const [expenses, setExpenses] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const userId = 8; // This can be passed via props or context later
+    const userId = localStorage.getItem('userId');
     const { categories } = useContext(CategoryContext);
 
     const handleOpen = () => setOpen(true);
