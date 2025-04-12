@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from '../utils/axios';
 import {
   PieChart, Pie, Cell, Tooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer,
@@ -17,62 +16,46 @@ function generateShades(baseColor, count) { // Generates shades of a base color
   return shades;
 }
 
-const SpendingCharts = ({ refresh }) => {
-  const [expenses, setExpenses] = useState([]);
+const SpendingCharts = ({ expenses }) => {
   const [categoryData, setCategoryData] = useState([]);
   const [dateData, setDateData] = useState([]);
-  const userId = localStorage.getItem('userId');
   const { categories } = useContext(CategoryContext);
-  const apiUrl = import.meta.env.VITE_API_URL;
-
-  const COLORS = generateShades('#130037', categoryData.length);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}`);
-        const data = response.data;
-        setExpenses(data);
+      if (!expenses || expenses.length === 0) return;
+  
+      const categoryMap = {};
+      let totalAmount = 0;
+      expenses.forEach(exp => {
+        totalAmount += exp.amount;
+        categoryMap[exp.categoryId] = (categoryMap[exp.categoryId] || 0) + exp.amount;
+      });
+  
+      const categoryWise = Object.entries(categoryMap).map(([id, amt]) => {
+        const categoryName = categories.find(cat => cat.id === parseInt(id))?.name || 'Unknown';
+        return {
+          category: categoryName,
+          amount: amt,
+          percentage: totalAmount > 0 ? (amt / totalAmount) * 100 : 0
+        };
+      }).filter(entry => entry.percentage > 0);
+  
+      const dateWise = expenses.reduce((acc, exp) => {
+        const dateStr = new Date(exp.date).toISOString().split('T')[0];
+        const existing = acc.find(item => item.date === dateStr);
+        if (existing) {
+          existing.Amount += exp.amount;
+        } else {
+          acc.push({ date: dateStr, Amount: exp.amount });
+        }
+        return acc;
+      }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+      setCategoryData(categoryWise);
+      setDateData(dateWise);
+    }, [expenses, categories]);
 
-        const categoryMap = {};
-        let totalAmount = 0;
-        data.forEach(exp => {
-          totalAmount += exp.amount;
-          categoryMap[exp.categoryId] = (categoryMap[exp.categoryId] || 0) + exp.amount;
-        });
-
-        const categoryWise = Object.entries(categoryMap)
-          .map(([id, amt]) => {
-            const categoryName = categories.find(cat => cat.id === parseInt(id))?.name || 'Unknown';
-            return {
-              category: categoryName,
-              amount: amt,
-              percentage: totalAmount > 0 ? (amt / totalAmount) * 100 : 0
-            };
-          })
-          .filter(entry => entry.percentage > 0);
-
-
-        const dateWise = data.reduce((acc, exp) => {
-          const dateStr = new Date(exp.date).toISOString().split('T')[0];
-          const existing = acc.find(item => item.date === dateStr);
-          if (existing) {
-            existing.Amount += exp.amount;
-          } else {
-            acc.push({ date: dateStr, Amount: exp.amount });
-          }
-          return acc;
-        }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        setCategoryData(categoryWise);
-        setDateData(dateWise);
-      } catch (error) {
-        console.error("Error fetching expenses:", error);
-      }
-    };
-
-    fetchExpenses();
-  }, [categories, refresh]);
+  const COLORS = generateShades('#130037', categoryData.length);
 
   return (
     <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2, borderRadius: 2 }}>
