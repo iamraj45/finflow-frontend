@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../utils/axios';
 import {
     Box,
     Button,
@@ -53,7 +53,7 @@ const AddExpenseForm = ({onSuccess}) => {
 
         try {
             const response = await axios.post(
-                `${apiUrl}/api/unsecure/expenses/addExpense`,
+                `${apiUrl}/api/expenses/addExpense`,
                 expenseData
             );
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import axios from '../utils/axios';
 import {
   PieChart, Pie, Cell, Tooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer,
@@ -30,7 +30,7 @@ const SpendingCharts = ({ refresh }) => {
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/unsecure/expenses/getExpenses?userId=${userId}`);
+        const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}`);
         const data = response.data;
         setExpenses(data);
 

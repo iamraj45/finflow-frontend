@@ -10,6 +10,7 @@ import {
   Paper,
   CircularProgress,
 } from '@mui/material';
+import axios from '../utils/axios';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -18,9 +19,8 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${apiUrl}/api/unsecure/getUserData`);
-      const data = await res.json();
-      setUsers(data);
+      const res = await axios.get(`${apiUrl}/api/getUserData`);
+      setUsers(res.data);
       setLoading(false);
     } catch (err) {
       console.error('Failed to fetch users:', err);

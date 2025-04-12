@@ -15,7 +15,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import AddExpenseForm from './AddExpenseForm';
-import axios from 'axios';
+import axios from '../utils/axios';
 import { CategoryContext } from '../context/CategoryContext';
 
 const MyExpenses = ({ onExpenseAdded }) => {
@@ -31,7 +31,7 @@ const MyExpenses = ({ onExpenseAdded }) => {
 
     const fetchExpenses = async () => {
         try {
-            const response = await axios.get(`${apiUrl}/api/unsecure/expenses/getExpenses?userId=${userId}`);
+            const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}`);
             setExpenses(response.data);
         } catch (error) {
             console.error("Failed to fetch expenses:", error);
