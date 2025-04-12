@@ -24,6 +24,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -37,6 +38,7 @@ const Login = () => {
         let isValid = true;
         setEmailError('');
         setPasswordError('');
+        setIsSubmitting(false);
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -54,6 +56,7 @@ const Login = () => {
         }
         if (!isValid) return;
         try {
+            setIsSubmitting(true);
             const response = await loginUser({ email, password });
             const token = response.data.token;
             localStorage.setItem('token', token);
@@ -168,7 +171,7 @@ const Login = () => {
                             },
                         }}
                     >
-                        Log In
+                        {isSubmitting ? 'Please wait...' : 'Log In'}
                     </Button>
 
                     <Box

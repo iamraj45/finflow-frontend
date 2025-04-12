@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import {
     Box,
     Typography,
@@ -15,32 +15,15 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import AddExpenseForm from './AddExpenseForm';
-import axios from 'axios';
 import { CategoryContext } from '../context/CategoryContext';
 
-const MyExpenses = ({ onExpenseAdded }) => {
+const MyExpenses = ({ expenses, onExpenseAdded }) => {
     const [open, setOpen] = useState(false);
-    const [expenses, setExpenses] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const userId = localStorage.getItem('userId');
     const { categories } = useContext(CategoryContext);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const apiUrl = import.meta.env.VITE_API_URL;
-
-    const fetchExpenses = async () => {
-        try {
-            const response = await axios.get(`${apiUrl}/api/unsecure/expenses/getExpenses?userId=${userId}`);
-            setExpenses(response.data);
-        } catch (error) {
-            console.error("Failed to fetch expenses:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchExpenses();
-    }, [userId]);
 
     const getCategoryName = (id) => {
         if (!Array.isArray(categories)) return 'Loading...';    
@@ -50,10 +33,9 @@ const MyExpenses = ({ onExpenseAdded }) => {
 
     const handleExpenseAdded = () => {
         handleClose();
-        fetchExpenses();
-        if (onExpenseAdded) onExpenseAdded(); // <-- notify Home.jsx
+        onExpenseAdded();  // Notify parent to refresh
         setSnackbarOpen(true);
-    };    
+    };
 
     return (
         <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 2 }}>
@@ -67,7 +49,11 @@ const MyExpenses = ({ onExpenseAdded }) => {
                             secondary={expense.description}
                         />
                         <Typography variant="caption" color="textSecondary">
-                            {new Date(expense.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                            {new Date(expense.date).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
                         </Typography>
                     </ListItem>
                 ))}

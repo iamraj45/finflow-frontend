@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../utils/axios';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API = axios.create({
