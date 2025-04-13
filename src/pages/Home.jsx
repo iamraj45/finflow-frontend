@@ -37,8 +37,6 @@ export default function Home() {
         sx={{
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
-          gap: 2,
-          p: 2,
           justifyContent: 'center',
           alignItems: 'flex-start',
         }}
