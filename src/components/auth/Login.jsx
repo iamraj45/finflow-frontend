@@ -16,7 +16,7 @@ import { useTheme } from '@mui/material/styles';
 import image from '../../assets/img.png';
 import { loginUser } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
     const theme = useTheme();
@@ -24,6 +24,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
@@ -55,6 +56,7 @@ const Login = () => {
             isValid = false;
         }
         if (!isValid) return;
+
         try {
             setIsSubmitting(true);
             const response = await loginUser({ email, password });
@@ -62,7 +64,7 @@ const Login = () => {
             localStorage.setItem('token', token);
 
             const decoded = jwtDecode(token);
-            const userId = decoded.userId; 
+            const userId = decoded.userId;
             const emailFromToken = decoded.email;
             const userName = decoded.name;
 
@@ -73,7 +75,10 @@ const Login = () => {
             navigate('/'); // redirect to homepage
         } catch (err) {
             console.error('Login failed:', err);
-            alert('Invalid credentials');
+            setError('Login failed. Please check your credentials.');
+        }
+        finally{
+            setIsSubmitting(false);
         }
     };
 
@@ -158,10 +163,16 @@ const Login = () => {
                         margin="normal"
                         InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
                     />
+                    {error && (
+                        <Typography variant="body2" color="error" mt={1}>
+                            {error}
+                        </Typography>
+                    )}
                     <Button
                         onClick={handleLogin}
                         variant="contained"
                         fullWidth
+                        disabled={isSubmitting}
                         sx={{
                             mt: 2,
                             backgroundColor: 'var(--color-secondary)',
