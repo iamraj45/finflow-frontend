@@ -86,7 +86,13 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    mb: 3
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: 'white',
+                    pb: 2,
+                    pt: 1,
+                    borderBottom: '1px solid #ddd'
                 }}
             >
                 <Typography variant="h4" sx={{ textAlign: 'left' }}>
@@ -112,7 +118,15 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                     </Tooltip>
 
                     {deleteMode && selectedExpenses.length > 0 && (
-                        <IconButton color="error" onClick={handleDeleteExpenses}>
+                        <IconButton
+                            size='small'
+                            sx={{
+                                color: 'white',
+                                backgroundColor: 'red',
+                                ml: 1,
+                            }}
+                            onClick={handleDeleteExpenses}
+                        >
                             <DeleteIcon />
                         </IconButton>
                     )}
@@ -137,7 +151,16 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                 </Box>
             </Box>
 
-            <List sx={{ maxWidth: 800, mx: 'auto', mb: 3 }}>
+            <List
+                sx={{
+                    maxWidth: 800,
+                    mx: 'auto',
+                    mb: 3,
+                    maxHeight: '60vh',
+                    overflowY: 'auto',
+                    pr: 1
+                }}
+            >
                 {expenses.map((expense) => (
                     <ListItem
                         key={expense.id}
