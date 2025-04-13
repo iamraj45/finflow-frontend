@@ -5,78 +5,129 @@ import {
   Typography,
   Box,
   IconButton,
-  Menu,
-  MenuItem,
-  Avatar,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
-import AppLogo from '../assets/logo.png'; 
-import { useNavigate } from 'react-router-dom'; 
+import MenuIcon from '@mui/icons-material/Menu';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AppLogo from '../assets/logo.png';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const menuOpen = Boolean(anchorEl);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
+  const userName = localStorage.getItem("userName");
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
   };
 
   const handleLogout = () => {
-    // Remove the token
     localStorage.removeItem("token");
-
-    // Close menu
-    handleMenuClose();
-
-    // Redirect to login page
+    setDrawerOpen(false);
     navigate("/sign-in");
   };
 
-  const userName = localStorage.getItem("userName");
+  const drawerList = (
+    <Box sx={{ width: 250 }} role="presentation">
+
+      <Box sx={{ backgroundColor: '#130037', color: 'white', padding: '0 35px', minHeight: '64px', display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography variant="body3" sx={{ fontWeight: 'bold', color: 'white' }}>
+          Hi, {userName}
+        </Typography>
+      </Box>
+
+      <Divider />
+
+      {/* Drawer Menu Items */}
+      <List>
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} button onClick={() => { navigate('/profile'); setDrawerOpen(false); }}>
+          <IconButton
+            size='small'
+            sx={{
+              backgroundColor: '#130037',
+              color: 'white',
+              ml: 1,
+              '&:hover': {
+                backgroundColor: '#2d005c',
+              }
+            }}
+          ><PersonOutlineIcon /></IconButton>
+          <ListItemText sx={{ paddingLeft: '20px' }} primary="My Profile" />
+        </ListItem>
+
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} button onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
+          <IconButton
+            size='small'
+            sx={{
+              backgroundColor: '#130037',
+              color: 'white',
+              ml: 1,
+              '&:hover': {
+                backgroundColor: '#2d005c',
+              }
+            }}
+          ><SettingsIcon /></IconButton>
+          <ListItemText sx={{ paddingLeft: '20px' }} primary="Settings" />
+        </ListItem>
+
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} button onClick={handleLogout}>
+          <IconButton
+            size='small'
+            sx={{
+              backgroundColor: '#130037',
+              color: 'white',
+              ml: 1,
+              '&:hover': {
+                backgroundColor: '#2d005c',
+              }
+            }}
+          ><LogoutIcon /></IconButton>
+          <ListItemText sx={{ paddingLeft: '20px' }} primary="Logout" />
+        </ListItem>
+      </List>
+    </Box>
+  );
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#130037' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        
-        {/* Left Section: App Logo and Name */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <img src={AppLogo} alt="App Logo" style={{ height: 50 }} />
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>
-            FinFlow
-          </Typography>
-        </Box>
+    <>
+      <AppBar position="static" sx={{ backgroundColor: '#130037' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
-        {/* Right Section: Account Avatar + Menu */}
-        <Box>
+          {/* Left Section: App Logo and Name */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <img src={AppLogo} alt="App Logo" style={{ height: 50 }} />
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>
+              FinFlow
+            </Typography>
+          </Box>
+
+          {/* Right Section: Menu Icon for Drawer */}
           <IconButton
             size="large"
             edge="end"
             color="inherit"
-            onClick={handleMenuOpen}
-          > 
-            <Avatar sx={{ bgcolor: '#7300e6' }}>
-              <AccountCircleRoundedIcon />
-            </Avatar>
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={menuOpen}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            onClick={toggleDrawer(true)}
           >
-            <MenuItem onClick={handleMenuClose}>Hi, {userName}</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Box>
-      </Toolbar>
-    </AppBar>
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer(false)}
+      >
+        {drawerList}
+      </Drawer>
+    </>
   );
 };
 
