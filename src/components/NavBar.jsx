@@ -98,7 +98,7 @@ const Navbar = () => {
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: '#130037' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '64px' }}>
 
           {/* Left Section: App Logo and Name */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

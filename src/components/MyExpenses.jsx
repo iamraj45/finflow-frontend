@@ -80,7 +80,7 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
     };
 
     return (
-        <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 2 }}>
+        <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
             <Box
                 sx={{
                     display: 'flex',

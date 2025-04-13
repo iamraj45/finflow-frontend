@@ -58,7 +58,7 @@ const SpendingCharts = ({ expenses }) => {
   const COLORS = generateShades('#130037', categoryData.length);
 
   return (
-    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2, borderRadius: 2 }}>
+    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2, borderRadius: 0}}>
       {expenses.length === 0 ? (
         <Typography variant="h5" color="textSecondary" sx={{ py: 5 }}>
           No expenses found. Start by adding some to view your charts!
