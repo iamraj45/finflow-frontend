@@ -18,8 +18,12 @@
     "axios": "^1.8.4",
     "date-fns": "^2.29.3",
     "dotenv": "^16.4.7",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "jwt-decode": "^4.0.0",
+    "papaparse": "^5.5.2",
     "react": "^19.0.0",
+    "react-csv": "^2.2.2",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.5.0",
     "recharts": "^2.15.2"

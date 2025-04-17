@@ -47,7 +47,7 @@ const Navbar = () => {
 
       {/* Drawer Menu Items */}
       <List>
-        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} button onClick={() => { navigate('/profile'); setDrawerOpen(false); }}>
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={() => { navigate('/profile'); setDrawerOpen(false); }}>
           <IconButton
             size='small'
             sx={{
@@ -62,7 +62,7 @@ const Navbar = () => {
           <ListItemText sx={{ paddingLeft: '20px' }} primary="My Profile" />
         </ListItem>
 
-        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} button onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
           <IconButton
             size='small'
             sx={{
@@ -77,7 +77,7 @@ const Navbar = () => {
           <ListItemText sx={{ paddingLeft: '20px' }} primary="Settings" />
         </ListItem>
 
-        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} button onClick={handleLogout}>
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={handleLogout}>
           <IconButton
             size='small'
             sx={{

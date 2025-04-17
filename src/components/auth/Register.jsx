@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { registerUser } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
-
+import TermsAndConditions from '../TermsAndConditions';
 import {
   Box,
   Grid,
   Typography,
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   Divider,
   useMediaQuery,
   Link,
@@ -185,18 +183,10 @@ const Register = () => {
             margin="normal"
             InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={agreed}
-                onChange={(e) => {
-                  setAgreed(e.target.checked);
-                  if (e.target.checked) setError('');
-                }}
-              />
-            }
-            label="I agree to the Terms & Conditions"
-            sx={{ mt: 1 }}
+          <TermsAndConditions
+            agreed={agreed}
+            setAgreed={setAgreed}
+            setError={setError}
           />
           {error && (
             <Typography variant="body2" color="error" mt={1}>
