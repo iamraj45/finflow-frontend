@@ -20,6 +20,7 @@ import Checkbox from '@mui/material/Checkbox';
 import EditIcon from '@mui/icons-material/Edit';
 import axios from '../utils/axios';
 import { CategoryContext } from '../context/CategoryContext';
+import ExportButtons from './ExportButtons';
 
 const MyExpenses = ({ expenses, onExpenseAdded }) => {
     const [open, setOpen] = useState(false);
@@ -148,6 +149,7 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
+                    <ExportButtons expenses={expenses} getCategoryName={getCategoryName} />
                 </Box>
             </Box>
 
