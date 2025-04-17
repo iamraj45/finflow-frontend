@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import {
     Box,
+    TextField,
     Typography,
     Tooltip,
     Modal,
@@ -10,7 +11,11 @@ import {
     ListItem,
     ListItemText,
     Snackbar,
-    Alert
+    Alert,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    Select
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
@@ -21,6 +26,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import axios from '../utils/axios';
 import { CategoryContext } from '../context/CategoryContext';
 import ExportButtons from './ExportButtons';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const MyExpenses = ({ expenses, onExpenseAdded }) => {
     const [open, setOpen] = useState(false);
@@ -29,10 +36,30 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
 
     const [deleteMode, setDeleteMode] = useState(false);
     const [selectedExpenses, setSelectedExpenses] = useState([]);
+
+    const [editingExpenseId, setEditingExpenseId] = useState(null);
+    const [editValues, setEditValues] = useState({});
+
     const apiUrl = import.meta.env.VITE_API_URL;
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const inputSx = {
+        '& .MuiInputBase-root': {
+            borderRadius: 2,
+            backgroundColor: '#fff',
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#ccc',
+        },
+        '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#999',
+        },
+        '& .MuiInputLabel-root': {
+            fontSize: '0.95rem',
+        }
+    };
 
     const toggleDeleteMode = () => {
         setDeleteMode(prev => !prev);
@@ -65,6 +92,32 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
         } catch (error) {
             console.error("Error deleting expenses:", error);
             alert('An error occurred while deleting expenses.');
+        }
+    };
+
+    const handleEditChange = (field, value) => {
+        setEditValues(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleSave = async () => {
+        try {
+            const updatedExpense = {
+                id: editingExpenseId,
+                amount: parseFloat(editValues.amount),
+                description: editValues.description,
+                date: new Date(editValues.date).getTime(),
+                categoryId: parseInt(editValues.categoryId)
+            };
+            const response = await axios.post(`${apiUrl}/api/expenses/updateExpense`, updatedExpense);
+            if (response.data.status === true) {
+                setEditingExpenseId(null);
+                onExpenseAdded(); // refresh
+            } else {
+                alert('Failed to update expense');
+            }
+        } catch (err) {
+            console.error('Error updating expense:', err);
+            alert('Error occurred while updating');
         }
     };
 
@@ -160,7 +213,6 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                     mb: 3,
                     maxHeight: '60vh',
                     overflowY: 'auto',
-                    pr: 1
                 }}
             >
                 {expenses.map((expense) => (
@@ -182,12 +234,57 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                                 onChange={() => handleSelectExpense(expense.id)}
                             />
                         )}
-
                         <Box sx={{ flexGrow: 1 }}>
-                            <ListItemText
-                                primary={`${getCategoryName(expense.categoryId)}: ₹${expense.amount}`}
-                                secondary={expense.description}
-                            />
+                            {editingExpenseId === expense.id ? (
+                                <Box display="flex" flexDirection="column" gap={1} my={2}>
+                                    <TextField
+                                        type="number"
+                                        value={editValues.amount}
+                                        onChange={(e) => handleEditChange('amount', e.target.value)}
+                                        label="Amount"
+                                        size="small"
+                                        sx={inputSx}
+                                    />
+                                    <TextField
+                                        value={editValues.description}
+                                        onChange={(e) => handleEditChange('description', e.target.value)}
+                                        label="Description"
+                                        size="small"
+                                        sx={inputSx}
+                                    />
+                                    <TextField
+                                        type="date"
+                                        value={editValues.date}
+                                        onChange={(e) => handleEditChange('date', e.target.value)}
+                                        label="Date"
+                                        size="small"
+                                        sx={inputSx}
+                                        inputProps={{ 
+                                            max: new Date().toISOString().split('T')[0], // Prevent future dates
+                                            onKeyDown: (e) => e.preventDefault() // Disable manual input
+                                        }} 
+                                        InputLabelProps={{ shrink: true }}
+                                    />
+                                    <FormControl fullWidth size="small" sx={inputSx}>
+                                        <InputLabel id="category-label">Category</InputLabel>
+                                        <Select
+                                            labelId="category-label"
+                                            value={editValues.categoryId}
+                                            label="Category"
+                                            onChange={(e) => handleEditChange('categoryId', e.target.value)}
+                                        >
+                                            {categories.map((cat) => (
+                                                <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+                            ) : (
+                                <ListItemText
+                                    primary={`${getCategoryName(expense.categoryId)}: ₹${expense.amount}`}
+                                    secondary={expense.description}
+                                />
+                            )}
                         </Box>
 
                         <Box
@@ -199,36 +296,82 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                                 justifyContent: 'flex-end',
                             }}
                         >
-                            <Typography
-                                variant="caption"
-                                color="textSecondary"
-                                sx={{ whiteSpace: 'nowrap' }}
-                            >
-                                {new Date(expense.date).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </Typography>
-                            <Tooltip title="Edit Expense">
-                                <IconButton
-                                    className="edit-icon"
-                                    size='small'
-                                    sx={{
-                                        opacity: 0,
-                                        transition: 'opacity 0.3s',
-                                        backgroundColor: '#130037',
-                                        color: 'white',
-                                        ml: 1,
-                                        '&:hover': {
-                                            backgroundColor: '#2d005c',
-                                        }
-                                    }}
-                                    onClick={() => alert(`Edit clicked for ID ${expense.id}`)}
+                            {editingExpenseId !== expense.id && (
+                                <Typography
+                                    variant="caption"
+                                    color="textSecondary"
+                                    sx={{ whiteSpace: 'nowrap' }}
                                 >
-                                    <EditIcon />
-                                </IconButton>
-                            </Tooltip>
+                                    {new Date(expense.date).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </Typography>
+                            )}
+                            {editingExpenseId === expense.id ? (
+                                <>
+                                    <Tooltip title="Save">
+                                        <IconButton
+                                            size="small"
+                                            sx={{
+                                                backgroundColor: '#130037',
+                                                color: 'white',
+                                                '&:hover': {
+                                                    backgroundColor: '#2d005c',
+                                                }
+                                            }}
+                                            onClick={handleSave}
+                                        >
+                                            <SaveIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Cancel">
+                                        <IconButton
+                                            size="small"
+                                            sx={{
+                                                backgroundColor: '#130037',
+                                                color: 'white',
+                                                ml: 2,
+                                                '&:hover': {
+                                                    backgroundColor: '#2d005c',
+                                                }
+                                            }}
+                                            onClick={() => setEditingExpenseId(null)}
+                                        >
+                                            <CancelIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </>
+                            ) : (
+                                <Tooltip title="Edit Expense">
+                                    <IconButton
+                                        className="edit-icon"
+                                        size="small"
+                                        sx={{
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s',
+                                            backgroundColor: '#130037',
+                                            color: 'white',
+                                            ml: 1,
+                                            '&:hover': {
+                                                backgroundColor: '#2d005c',
+                                            }
+                                        }}
+                                        onClick={() => {
+                                            setEditingExpenseId(expense.id);
+                                            setEditValues({
+                                                amount: expense.amount,
+                                                description: expense.description,
+                                                date: new Date(expense.date).toISOString().split('T')[0],
+                                                categoryId: expense.categoryId
+                                            });
+                                        }}
+                                    >
+                                        <EditIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
                         </Box>
                     </ListItem>
                 ))}
