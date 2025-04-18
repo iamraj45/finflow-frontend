@@ -39,7 +39,7 @@ export default function BudgetPage() {
   };
 
   const handleSaveTotal = async () => {
-    await saveTotalBudget(localTotalBudget);
+    await saveTotalBudget(parseFloat(localTotalBudget));
     alert('Total budget saved');
   };
 

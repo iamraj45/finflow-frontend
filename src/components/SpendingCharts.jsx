@@ -195,7 +195,7 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
           </Paper>
 
           <Paper sx={{ p: 2 }}>
-            <Typography variant="h4" gutterBottom>Spending Over Time</Typography>
+            <Typography variant="h4" gutterBottom>Last 7 Days Spendings</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={dateData}>
                 <CartesianGrid strokeDasharray="4 4" />
