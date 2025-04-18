@@ -35,7 +35,9 @@ function App() {
           element={
             <PrivateRoute>
               <BudgetProvider>
-              <BudgetPage />
+                <CategoryProvider>
+                  <BudgetPage />
+                </CategoryProvider>
               </BudgetProvider>
             </PrivateRoute>
           }
