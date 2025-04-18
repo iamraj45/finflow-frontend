@@ -4,69 +4,88 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer,
   LineChart, Line
 } from 'recharts';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, Alert } from '@mui/material';
 import { CategoryContext } from '../context/CategoryContext';
 
-function generateShades(baseColor, count) { // Generates shades of a base color
+function generateShades(baseColor, count) {
   const shades = [];
   for (let i = 0; i < count; i++) {
-    const lightness = 10 + i * (70 / count); // Between 10% and 80% lightness
+    const lightness = 10 + i * (70 / count);
     shades.push(`hsl(270, 100%, ${lightness}%)`);
   }
   return shades;
 }
 
-const SpendingCharts = ({ expenses }) => {
+const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) => {
   const [categoryData, setCategoryData] = useState([]);
   const [dateData, setDateData] = useState([]);
   const { categories } = useContext(CategoryContext);
 
   useEffect(() => {
-      if (!expenses || expenses.length === 0) return;
-  
-      const categoryMap = {};
-      let totalAmount = 0;
-      expenses.forEach(exp => {
-        totalAmount += exp.amount;
-        categoryMap[exp.categoryId] = (categoryMap[exp.categoryId] || 0) + exp.amount;
-      });
-  
-      const categoryWise = Object.entries(categoryMap).map(([id, amt]) => {
-        const categoryName = categories.find(cat => cat.id === parseInt(id))?.name || 'Unknown';
-        return {
-          category: categoryName,
-          amount: amt,
-          percentage: totalAmount > 0 ? (amt / totalAmount) * 100 : 0
-        };
-      }).filter(entry => entry.percentage > 0);
-  
-      const dateWise = expenses.reduce((acc, exp) => {
-        const dateStr = new Date(exp.date).toISOString().split('T')[0];
-        const existing = acc.find(item => item.date === dateStr);
-        if (existing) {
-          existing.Amount += exp.amount;
-        } else {
-          acc.push({ date: dateStr, Amount: exp.amount });
-        }
-        return acc;
-      }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
-  
-      setCategoryData(categoryWise);
-      setDateData(dateWise);
-    }, [expenses, categories]);
+    if (!expenses || expenses.length === 0) return;
+
+    const categoryMap = {};
+    let totalAmount = 0;
+
+    expenses.forEach(exp => {
+      totalAmount += exp.amount;
+      categoryMap[exp.categoryId] = (categoryMap[exp.categoryId] || 0) + exp.amount;
+    });
+
+    const categoryWise = Object.entries(categoryMap).map(([id, amt]) => {
+      const categoryName = categories.find(cat => cat.id === parseInt(id))?.name || 'Unknown';
+      return {
+        categoryId: id,
+        category: categoryName,
+        amount: amt,
+        percentage: totalAmount > 0 ? (amt / totalAmount) * 100 : 0,
+      };
+    }).filter(entry => entry.percentage > 0);
+
+    const dateWise = expenses.reduce((acc, exp) => {
+      const dateStr = new Date(exp.date).toISOString().split('T')[0];
+      const existing = acc.find(item => item.date === dateStr);
+      if (existing) {
+        existing.Amount += exp.amount;
+      } else {
+        acc.push({ date: dateStr, Amount: exp.amount });
+      }
+      return acc;
+    }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    setCategoryData(categoryWise);
+    setDateData(dateWise);
+  }, [expenses, categories]);
 
   const COLORS = generateShades('#130037', categoryData.length);
 
+  const overLimitCategories = categoryData
+    .filter(entry => overBudget?.categories?.includes(parseInt(entry.categoryId)))
+    .map(entry => entry.category);
+
   return (
-    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2, borderRadius: 0}}>
+    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2 }}>
       {expenses.length === 0 ? (
         <Typography variant="h5" color="textSecondary" sx={{ py: 5 }}>
           No expenses found. Start by adding some to view your charts!
         </Typography>
       ) : (
         <>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>My Spendings</Typography>
+          <Paper sx={{ p: 2, mb: 2 }}>
+            <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>My Spendings</Typography>
+
+            {overBudget?.total && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                🚨 You have exceeded your <strong>total budget</strong> of ₹{totalBudget}.
+              </Alert>
+            )}
+
+            {overLimitCategories.length > 0 && (
+              <Alert severity="warning" sx={{ mb: 2 }}>
+                ⚠️ Budget limit exceeded for: <strong>{overLimitCategories.join(', ')}</strong>
+              </Alert>
+            )}
+
             <ResponsiveContainer width="100%" height={350}>
               <BarChart data={categoryData}>
                 <CartesianGrid strokeDasharray="4 4" />
@@ -75,9 +94,15 @@ const SpendingCharts = ({ expenses }) => {
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="amount" name="Amount">
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-bar-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
+                  {categoryData.map((entry, index) => {
+                    const isOver = overBudget?.categories?.includes(parseInt(entry.categoryId));
+                    return (
+                      <Cell
+                        key={`cell-bar-${index}`}
+                        fill={isOver ? '#d32f2f' : COLORS[index % COLORS.length]}
+                      />
+                    );
+                  })}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

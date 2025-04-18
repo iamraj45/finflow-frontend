@@ -16,8 +16,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AppLogo from '../assets/logo.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -77,6 +78,21 @@ const Navbar = () => {
           <ListItemText sx={{ paddingLeft: '20px' }} primary="Settings" />
         </ListItem>
 
+        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={() => { navigate('/budget'); setDrawerOpen(false); }}>
+          <IconButton
+            size='small'
+            sx={{
+              backgroundColor: '#130037',
+              color: 'white',
+              ml: 1,
+              '&:hover': {
+                backgroundColor: '#2d005c',
+              }
+            }}
+          ><AttachMoneyIcon /></IconButton>
+          <ListItemText sx={{ paddingLeft: '20px' }} primary="Budget" />
+        </ListItem>
+
         <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={handleLogout}>
           <IconButton
             size='small'
@@ -101,12 +117,14 @@ const Navbar = () => {
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '64px' }}>
 
           {/* Left Section: App Logo and Name */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <img src={AppLogo} alt="App Logo" style={{ height: 50 }} />
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>
-              FinFlow
-            </Typography>
-          </Box>
+          <Link to="/" style={{ textDecoration: 'none' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}>
+              <img src={AppLogo} alt="App Logo" style={{ height: 50 }} />
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>
+                FinFlow
+              </Typography>
+            </Box>
+          </Link>
 
           {/* Right Section: Menu Icon for Drawer */}
           <IconButton
