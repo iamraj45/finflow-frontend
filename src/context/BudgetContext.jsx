@@ -51,6 +51,20 @@ export const BudgetProvider = ({ children }) => {
     }
   };  
 
+  const deleteCategoryBudget = async (categoryId) => {
+    try {
+      await axios.delete(`${apiUrl}/api/budgets/deleteCategoryBudget`, {
+        params: {
+          userId,
+          categoryId
+        }
+      });
+      await fetchBudgets(); // Refresh budget data after deletion
+    } catch (err) {
+      console.error('Failed to delete category budget:', err);
+    }
+  };  
+
   useEffect(() => {
     fetchBudgets();
   }, [userId]);
@@ -62,6 +76,7 @@ export const BudgetProvider = ({ children }) => {
       fetchBudgets,
       saveTotalBudget,
       saveCategoryBudgets,
+      deleteCategoryBudget,
     }}>
       {children}
     </BudgetContext.Provider>

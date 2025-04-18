@@ -1,13 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import './style.css'
-import { SnackbarProvider } from 'notistack'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import './style.css';
+import CustomSnackbarProvider from '../src/components/CustomSnackbarProvider.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SnackbarProvider maxSnack={3}>
+    <CustomSnackbarProvider>
       <App />
-    </SnackbarProvider>
+    </CustomSnackbarProvider>
   </StrictMode>,
-)
+);
