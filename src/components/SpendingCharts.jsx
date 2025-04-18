@@ -44,19 +44,42 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
       };
     }).filter(entry => entry.percentage > 0);
 
-    const dateWise = expenses.reduce((acc, exp) => {
-      const dateStr = new Date(exp.date).toISOString().split('T')[0];
-      const existing = acc.find(item => item.date === dateStr);
-      if (existing) {
-        existing.Amount += exp.amount;
-      } else {
-        acc.push({ date: dateStr, Amount: exp.amount });
-      }
-      return acc;
-    }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
+    // const dateWise = expenses.reduce((acc, exp) => {
+    //   const dateStr = new Date(exp.date).toISOString().split('T')[0];
+    //   const existing = acc.find(item => item.date === dateStr);
+    //   if (existing) {
+    //     existing.Amount += exp.amount;
+    //   } else {
+    //     acc.push({ date: dateStr, Amount: exp.amount });
+    //   }
+    //   return acc;
+    // }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
 
+    const today = new Date();
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(d.getDate() - (6 - i));
+      return d.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    });
+
+    const dateMap = {};
+    expenses.forEach(exp => {
+      const dateStr = new Date(exp.date).toISOString().split('T')[0];
+      dateMap[dateStr] = (dateMap[dateStr] || 0) + exp.amount;
+    });
+
+    const last7Data = last7Days.map(date => ({
+      date,
+      Amount: dateMap[date] || 0,
+    }));
+
+    const maxAmount = Math.max(...last7Data.map(d => d.Amount));
+    const highlightedData = last7Data.map(d => ({
+      ...d,
+      isMax: d.Amount === maxAmount,
+    }));
+    setDateData(highlightedData);
     setCategoryData(categoryWise);
-    setDateData(dateWise);
   }, [expenses, categories]);
 
   const COLORS = generateShades('#130037', categoryData.length);
@@ -152,7 +175,7 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
               </BarChart>
             </ResponsiveContainer>
 
-            <ResponsiveContainer width="100%" height={300}>
+            {/* <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
                   data={categoryData}
@@ -168,7 +191,7 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
                 </Pie>
                 <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
               </PieChart>
-            </ResponsiveContainer>
+            </ResponsiveContainer> */}
           </Paper>
 
           <Paper sx={{ p: 2 }}>
@@ -178,9 +201,30 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
                 <CartesianGrid strokeDasharray="4 4" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip
+                  formatter={(value, name, props) =>
+                    props.payload.isMax
+                      ? [`₹${value} (Highest)`, name]
+                      : [`₹${value}`, name]
+                  }
+                />
                 <Legend />
-                <Line type="monotone" dataKey="Amount" stroke="#6a1b9a" />
+                <Line
+                  type="monotone"
+                  dataKey="Amount"
+                  stroke="#6a1b9a"
+                  strokeWidth={2}
+                  dot={({ cx, cy, payload }) => (
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={5}
+                      fill={payload.isMax ? '#d32f2f' : '#6a1b9a'} // red for max
+                      stroke="#fff"
+                      strokeWidth={1}
+                    />
+                  )}
+                />
               </LineChart>
             </ResponsiveContainer>
           </Paper>
