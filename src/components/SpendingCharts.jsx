@@ -214,16 +214,17 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
                   dataKey="Amount"
                   stroke="#6a1b9a"
                   strokeWidth={2}
-                  dot={({ cx, cy, payload }) => (
+                  dot={({ cx, cy, payload, index }) => (
                     <circle
+                      key={`dot-${index}`}
                       cx={cx}
                       cy={cy}
                       r={5}
-                      fill={payload.isMax ? '#d32f2f' : '#6a1b9a'} // red for max
+                      fill={payload.isMax ? '#d32f2f' : '#6a1b9a'}
                       stroke="#fff"
                       strokeWidth={1}
                     />
-                  )}
+                  )}                  
                 />
               </LineChart>
             </ResponsiveContainer>
