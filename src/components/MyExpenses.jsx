@@ -140,7 +140,6 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    position: 'sticky',
                     top: 0,
                     zIndex: 1,
                     backgroundColor: 'white',

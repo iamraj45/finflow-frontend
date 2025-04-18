@@ -11,7 +11,6 @@ export default function Home() {
   const [totalBudget, setTotalBudget] = useState(null);
   const [categoryBudgets, setCategoryBudgets] = useState([]);
   const [overBudget, setOverBudget] = useState({ total: false, categories: [] });
-  const [showAlert, setShowAlert] = useState(true);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
@@ -69,12 +68,6 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      {showAlert && (overBudget.total || overBudget.categories.length > 0) && (
-        <Alert severity="warning" onClose={() => setShowAlert(false)}>
-          {overBudget.total && "⚠️ You have crossed your total budget! "}
-          {overBudget.categories.length > 0 && `⚠️ Over budget in ${overBudget.categories.length} category(ies).`}
-        </Alert>
-      )}
       <Box
         sx={{
           display: 'flex',

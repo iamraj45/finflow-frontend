@@ -37,7 +37,6 @@ const Navbar = () => {
 
   const drawerList = (
     <Box sx={{ width: 250 }} role="presentation">
-
       <Box sx={{ backgroundColor: '#130037', color: 'white', padding: '0 35px', minHeight: '64px', display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography variant="body3" sx={{ fontWeight: 'bold', color: 'white' }}>
           Hi, {userName}
@@ -63,7 +62,7 @@ const Navbar = () => {
           <ListItemText sx={{ paddingLeft: '20px' }} primary="My Profile" />
         </ListItem>
 
-        <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
+        {/* <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={() => { navigate('/settings'); setDrawerOpen(false); }}>
           <IconButton
             size='small'
             sx={{
@@ -76,7 +75,7 @@ const Navbar = () => {
             }}
           ><SettingsIcon /></IconButton>
           <ListItemText sx={{ paddingLeft: '20px' }} primary="Settings" />
-        </ListItem>
+        </ListItem> */}
 
         <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={() => { navigate('/budget'); setDrawerOpen(false); }}>
           <IconButton
@@ -90,7 +89,7 @@ const Navbar = () => {
               }
             }}
           ><AttachMoneyIcon /></IconButton>
-          <ListItemText sx={{ paddingLeft: '20px' }} primary="Budget" />
+          <ListItemText sx={{ paddingLeft: '20px' }} primary="Budget Settings" />
         </ListItem>
 
         <ListItem sx={{ padding: '10px 20px', cursor: 'pointer' }} onClick={handleLogout}>
@@ -113,7 +112,7 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar position="static" sx={{ backgroundColor: '#130037' }}>
+      <AppBar position="sticky" sx={{ backgroundColor: '#130037' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', minHeight: '64px' }}>
 
           {/* Left Section: App Logo and Name */}

@@ -20,6 +20,8 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
   const [categoryData, setCategoryData] = useState([]);
   const [dateData, setDateData] = useState([]);
   const { categories } = useContext(CategoryContext);
+  const [showTotalAlert, setShowTotalAlert] = useState(true);
+  const [showCategoryAlert, setShowCategoryAlert] = useState(true);
 
   useEffect(() => {
     if (!expenses || expenses.length === 0) return;
@@ -63,6 +65,29 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
     .filter(entry => overBudget?.categories?.includes(parseInt(entry.categoryId)))
     .map(entry => entry.category);
 
+  const transformedData = categoryData.map(entry => {
+    const categoryId = parseInt(entry.categoryId);
+    const budgetEntry = categoryBudgets?.find(b => b.categoryId === categoryId);
+
+    if (!budgetEntry) {
+      // No budget set for this category
+      return {
+        ...entry,
+        withinBudget: entry.amount,
+        overBudget: 0,
+        hasBudget: false
+      };
+    }
+
+    const budget = budgetEntry.budget;
+    return {
+      ...entry,
+      withinBudget: entry.amount > budget ? budget : entry.amount,
+      overBudget: entry.amount > budget ? entry.amount - budget : 0,
+      hasBudget: true
+    };
+  });
+
   return (
     <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2 }}>
       {expenses.length === 0 ? (
@@ -74,35 +99,55 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
           <Paper sx={{ p: 2, mb: 2 }}>
             <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>My Spendings</Typography>
 
-            {overBudget?.total && (
-              <Alert severity="warning" sx={{ mb: 2 }}>
-                🚨 You have exceeded your <strong>total budget</strong> of ₹{totalBudget}.
+            {showTotalAlert && overBudget?.total && (
+              <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setShowTotalAlert(false)}>
+                You have exceeded your <strong>total budget</strong> of ₹{totalBudget}
               </Alert>
             )}
 
-            {overLimitCategories.length > 0 && (
-              <Alert severity="warning" sx={{ mb: 2 }}>
-                ⚠️ Budget limit exceeded for: <strong>{overLimitCategories.join(', ')}</strong>
+            {showCategoryAlert && overLimitCategories.length > 0 && (
+              <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setShowCategoryAlert(false)}>
+                Budget limit exceeded for: <strong>{overLimitCategories.join(', ')}</strong>
               </Alert>
             )}
 
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={categoryData}>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={transformedData}>
                 <CartesianGrid strokeDasharray="4 4" />
                 <XAxis dataKey="category" interval={0} angle={-30} textAnchor="end" height={80} />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="amount" name="Amount">
-                  {categoryData.map((entry, index) => {
-                    const isOver = overBudget?.categories?.includes(parseInt(entry.categoryId));
-                    return (
-                      <Cell
-                        key={`cell-bar-${index}`}
-                        fill={isOver ? '#d32f2f' : COLORS[index % COLORS.length]}
-                      />
-                    );
-                  })}
+                <Legend
+                  content={() => (
+                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <div style={{ width: 14, height: 14, backgroundColor: '#6a1b9a' /* or COLORS[0] */ }}></div>
+                        <span>Within Budget</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <div style={{ width: 14, height: 14, backgroundColor: '#d32f2f' }}></div>
+                        <span>Over Budget</span>
+                      </div>
+                    </div>
+                  )}
+                />
+
+                <Bar dataKey="withinBudget" name="Within Budget" stackId="a">
+                  {transformedData.map((entry, index) => (
+                    <Cell
+                      key={`cell-wb-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Bar>
+
+                <Bar dataKey="overBudget" name="Over Budget" stackId="a">
+                  {transformedData.map((entry, index) => (
+                    <Cell
+                      key={`cell-ob-${index}`}
+                      fill={entry.hasBudget ? '#d32f2f' : COLORS[index % COLORS.length]} // fallback to same color if no budget
+                    />
+                  ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

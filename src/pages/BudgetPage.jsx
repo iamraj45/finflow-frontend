@@ -44,7 +44,6 @@ export default function BudgetPage() {
   };
 
   const handleSaveCategories = async () => {
-    console.log('Saving category budgets:', localCategoryBudgets); //debug
     await saveCategoryBudgets(localCategoryBudgets);
     alert('Category budgets saved');
     setLocalCategoryBudgets(categoryBudgets);
