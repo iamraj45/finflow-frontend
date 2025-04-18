@@ -5,6 +5,8 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import PrivateRoute from './components/common/PrivateRoute';
 import { CategoryProvider } from './context/CategoryContext';
+import BudgetPage from './pages/BudgetPage';
+import { BudgetProvider } from './context/BudgetContext';
 
 function App() {
   return (
@@ -25,6 +27,18 @@ function App() {
           element={
             <PrivateRoute>
               <Users />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/budget"
+          element={
+            <PrivateRoute>
+              <BudgetProvider>
+                <CategoryProvider>
+                  <BudgetPage />
+                </CategoryProvider>
+              </BudgetProvider>
             </PrivateRoute>
           }
         />

@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from '@mui/material';
+import { Box, useMediaQuery, Alert } from '@mui/material';
 import { useState, useEffect } from 'react';
 import MyExpenses from "../components/MyExpenses.jsx";
 import SpendingCharts from "../components/SpendingCharts.jsx";
@@ -7,8 +7,11 @@ import axios from '../utils/axios';
 
 export default function Home() {
   const isMobile = useMediaQuery('(max-width:768px)');
-  const [refreshCharts, setRefreshCharts] = useState(false);
   const [expenses, setExpenses] = useState([]);
+  const [totalBudget, setTotalBudget] = useState(null);
+  const [categoryBudgets, setCategoryBudgets] = useState([]);
+  const [overBudget, setOverBudget] = useState({ total: false, categories: [] });
+
   const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
 
@@ -21,13 +24,45 @@ export default function Home() {
     }
   };
 
+  const fetchBudgets = async () => {
+    try {
+      const totalBudgetRes = await axios.get(`${apiUrl}/api/getUserData?userId=${userId}`);
+      const categoryBudgetRes = await axios.get(`${apiUrl}/api/budgets/getCategoryBudget?userId=${userId}`);
+
+      setTotalBudget(totalBudgetRes.data.totalBudget || null);
+      setCategoryBudgets(categoryBudgetRes.data || []);
+    } catch (error) {
+      console.error("Failed to fetch budgets:", error);
+    }
+  };
+
   useEffect(() => {
     fetchExpenses();
+    fetchBudgets();
   }, [userId]);
 
+  useEffect(() => {
+    if (!expenses.length || totalBudget === null) return;
+
+    const totalSpent = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const categoryTotals = expenses.reduce((acc, exp) => {
+      acc[exp.categoryId] = (acc[exp.categoryId] || 0) + exp.amount;
+      return acc;
+    }, {});
+
+    const crossedCategories = categoryBudgets.filter(catBud => {
+      const spent = categoryTotals[catBud.categoryId] || 0;
+      return spent > catBud.budget;
+    });
+
+    setOverBudget({
+      total: totalSpent > totalBudget,
+      categories: crossedCategories.map(cat => cat.categoryId),
+    });
+  }, [expenses, totalBudget, categoryBudgets]);
+
   const handleExpenseAdded = () => {
-    fetchExpenses(); // refresh data
-    setRefreshCharts(prev => !prev); // optional, can remove if child no longer fetches
+    fetchExpenses();
   };
 
   return (
@@ -50,6 +85,9 @@ export default function Home() {
         <Box sx={{ flex: 1, minWidth: '400px' }}>
           <SpendingCharts
             expenses={expenses}
+            totalBudget={totalBudget}
+            categoryBudgets={categoryBudgets}
+            overBudget={overBudget}
           />
         </Box>
       </Box>
