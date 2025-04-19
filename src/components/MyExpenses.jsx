@@ -14,8 +14,9 @@ import {
     Alert,
     MenuItem,
     FormControl,
+    Button,
     InputLabel,
-    Select
+    Select,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
@@ -28,8 +29,9 @@ import { CategoryContext } from '../context/CategoryContext';
 import ExportButtons from './ExportButtons';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DateRangeFilter from './DateRangeFilter';
 
-const MyExpenses = ({ expenses, onExpenseAdded }) => {
+const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDateRange }) => {
     const [open, setOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const { categories } = useContext(CategoryContext);
@@ -40,10 +42,14 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
     const [editingExpenseId, setEditingExpenseId] = useState(null);
     const [editValues, setEditValues] = useState({});
 
-    const apiUrl = import.meta.env.VITE_API_URL;
-
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const [filterOpen, setFilterOpen] = useState(false);
+    const handleFilterOpen = () => setFilterOpen(true);
+    const handleFilterClose = () => setFilterOpen(false);
+
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     const inputSx = {
         '& .MuiInputBase-root': {
@@ -135,23 +141,22 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
 
     return (
         <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+            {/* Title */}
+            <Typography variant="h4" sx={{ textAlign: 'center', mb: 2 }}>
+                My Expenses
+            </Typography>
+
+            {/* Buttons + Filter */}
             <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    top: 0,
-                    zIndex: 1,
-                    backgroundColor: 'white',
-                    pb: 2,
-                    pt: 1,
-                    borderBottom: '1px solid #ddd'
+                    mb: 2,
+                    flexWrap: 'wrap',
+                    gap: 1
                 }}
             >
-                <Typography variant="h4" sx={{ textAlign: 'left' }}>
-                    My Expenses
-                </Typography>
-
                 <Box display="flex" gap={2}>
                     <Tooltip title="Add Expense">
                         <IconButton
@@ -160,10 +165,7 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                             sx={{
                                 backgroundColor: '#130037',
                                 color: 'white',
-                                ml: 1,
-                                '&:hover': {
-                                    backgroundColor: '#2d005c',
-                                }
+                                '&:hover': { backgroundColor: '#2d005c' }
                             }}
                         >
                             <AddIcon />
@@ -173,11 +175,7 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                     {deleteMode && selectedExpenses.length > 0 && (
                         <IconButton
                             size='small'
-                            sx={{
-                                color: 'white',
-                                backgroundColor: 'red',
-                                ml: 1,
-                            }}
+                            sx={{ color: 'white', backgroundColor: 'red' }}
                             onClick={handleDeleteExpenses}
                         >
                             <DeleteIcon />
@@ -192,16 +190,63 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                             sx={{
                                 backgroundColor: '#130037',
                                 color: 'white',
-                                ml: 1,
-                                '&:hover': {
-                                    backgroundColor: '#2d005c',
-                                }
+                                '&:hover': { backgroundColor: '#2d005c' }
                             }}
                         >
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
+
                     <ExportButtons expenses={expenses} getCategoryName={getCategoryName} />
+                </Box>
+                <Box>
+                    <Tooltip title="Filter Expenses">
+                        <Button
+                            onClick={handleFilterOpen}
+                            sx={{
+                                backgroundColor: '#130037',
+                                '&:hover': { backgroundColor: '#2d005c' },
+                            }}
+                        >
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    px: 1,
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.9rem',
+                                }}
+                            >
+                                Filter
+                            </Typography>
+                        </Button>
+                    </Tooltip>
+
+                    <Modal open={filterOpen} onClose={handleFilterClose}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                borderRadius: 2,
+                                p: 3,
+                                outline: 'none',
+                            }}
+                        >
+                            <DateRangeFilter
+                                onApply={(range) => {
+                                    setSelectedDateRange({
+                                        startDate: range.startDate,
+                                        endDate: range.endDate,
+                                    });
+                                    handleFilterClose();
+                                }}
+                            />
+                        </Box>
+                    </Modal>
                 </Box>
             </Box>
 
@@ -258,10 +303,10 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                                         label="Date"
                                         size="small"
                                         sx={inputSx}
-                                        inputProps={{ 
+                                        inputProps={{
                                             max: new Date().toISOString().split('T')[0], // Prevent future dates
                                             onKeyDown: (e) => e.preventDefault() // Disable manual input
-                                        }} 
+                                        }}
                                         InputLabelProps={{ shrink: true }}
                                     />
                                     <FormControl fullWidth size="small" sx={inputSx}>

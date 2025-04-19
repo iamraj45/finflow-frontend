@@ -106,8 +106,8 @@ export default function BudgetPage() {
         }}
       >
         {/* Left Section */}
-        <Box sx={{ flex: 1, minWidth: '300px', border: '1px solid #ccc', p: 3, borderRadius: 0 }}>
-          <Paper elevation={2} sx={{ p: 4 }}>
+        <Box sx={{ flex: 1, minWidth: '400px', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+          <Paper elevation={2}>
             <Typography variant="h6" mb={2} gutterBottom>Total Budget</Typography>
             <TextField
               type="number"
@@ -160,8 +160,8 @@ export default function BudgetPage() {
         </Box>
 
         {/* Right Section - Add New Category Budgets */}
-        <Box sx={{ flex: 1, minWidth: '300px', border: '1px solid #ccc', p: 3, borderRadius: 0 }}>
-          <Paper elevation={2} sx={{ p: 4 }}>
+        <Box sx={{ flex: 1, minWidth: '400px', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+          <Paper elevation={2}>
             <Typography variant="h6" mb={2} gutterBottom>Add Category Budgets</Typography>
             <Stack spacing={2}>
               {newBudgets.map((entry, index) => (

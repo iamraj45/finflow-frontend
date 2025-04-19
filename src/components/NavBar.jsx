@@ -8,13 +8,11 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   Divider,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AppLogo from '../assets/logo.png';
