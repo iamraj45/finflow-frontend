@@ -79,7 +79,6 @@ const ExportButtons = ({ expenses, getCategoryName }) => {
                     sx={{
                         backgroundColor: '#130037',
                         color: 'white',
-                        ml: 1,
                         '&:hover': {
                             backgroundColor: '#2d005c',
                         }
