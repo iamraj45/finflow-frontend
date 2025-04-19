@@ -14,8 +14,10 @@ import {
     Alert,
     MenuItem,
     FormControl,
+    Button,
     InputLabel,
-    Select
+    Select,
+    Popover
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
@@ -159,23 +161,22 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
 
     return (
         <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+            {/* Title */}
+            <Typography variant="h4" sx={{ textAlign: 'center', mb: 2 }}>
+                My Expenses
+            </Typography>
+
+            {/* Buttons + Filter */}
             <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    top: 0,
-                    zIndex: 1,
-                    backgroundColor: 'white',
-                    pb: 2,
-                    pt: 1,
-                    borderBottom: '1px solid #ddd'
+                    mb: 2,
+                    flexWrap: 'wrap',
+                    gap: 1
                 }}
             >
-                <Typography variant="h4" sx={{ textAlign: 'left' }}>
-                    My Expenses
-                </Typography>
-
                 <Box display="flex" gap={2}>
                     <Tooltip title="Add Expense">
                         <IconButton
@@ -184,10 +185,7 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                             sx={{
                                 backgroundColor: '#130037',
                                 color: 'white',
-                                ml: 1,
-                                '&:hover': {
-                                    backgroundColor: '#2d005c',
-                                }
+                                '&:hover': { backgroundColor: '#2d005c' }
                             }}
                         >
                             <AddIcon />
@@ -197,11 +195,7 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                     {deleteMode && selectedExpenses.length > 0 && (
                         <IconButton
                             size='small'
-                            sx={{
-                                color: 'white',
-                                backgroundColor: 'red',
-                                ml: 1,
-                            }}
+                            sx={{ color: 'white', backgroundColor: 'red' }}
                             onClick={handleDeleteExpenses}
                         >
                             <DeleteIcon />
@@ -216,15 +210,13 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                             sx={{
                                 backgroundColor: '#130037',
                                 color: 'white',
-                                ml: 1,
-                                '&:hover': {
-                                    backgroundColor: '#2d005c',
-                                }
+                                '&:hover': { backgroundColor: '#2d005c' }
                             }}
                         >
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
+
                     <ExportButtons expenses={expenses} getCategoryName={getCategoryName} />
                 </Box>
 
