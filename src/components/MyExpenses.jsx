@@ -17,7 +17,6 @@ import {
     Button,
     InputLabel,
     Select,
-    Popover
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
@@ -42,29 +41,6 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
 
     const [editingExpenseId, setEditingExpenseId] = useState(null);
     const [editValues, setEditValues] = useState({});
-
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-
-    // State for popover
-    const [filterAnchorEl, setFilterAnchorEl] = useState(null);
-
-    const handleFilterClick = (event) => {
-        setFilterAnchorEl(event.currentTarget);
-    };
-
-    const handleFilterClose = () => {
-        setFilterAnchorEl(null);
-    };
-
-    const handleDateRangeSelection = (start, end) => {
-        // Update your date range state
-        setStartDate(start);
-        setEndDate(end);
-        // If you're filtering based on date, you can trigger filter logic here
-    };
-
-    const openFilter = Boolean(filterAnchorEl);
 
     const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -223,7 +199,6 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                 <>
                     <Tooltip title="Filter Expenses">
                         <Button
-                            onClick={handleFilterClick}
                             sx={{
                                 backgroundColor: '#130037',
                                 '&:hover': { backgroundColor: '#2d005c' }
@@ -234,24 +209,6 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                             </Typography>
                         </Button>
                     </Tooltip>
-
-                    <Popover
-                        open={openFilter}
-                        anchorEl={filterAnchorEl}
-                        onClose={handleFilterClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                    >
-                        <Box sx={{ p: 0}}>
-                            <DateRangeFilter onDateRangeSelected={handleDateRangeSelection} />
-                        </Box>
-                    </Popover>
                 </>
             </Box>
 
