@@ -42,10 +42,14 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
     const [editingExpenseId, setEditingExpenseId] = useState(null);
     const [editValues, setEditValues] = useState({});
 
-    const apiUrl = import.meta.env.VITE_API_URL;
-
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const [filterOpen, setFilterOpen] = useState(false);
+    const handleFilterOpen = () => setFilterOpen(true);
+    const handleFilterClose = () => setFilterOpen(false);
+
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     const inputSx = {
         '& .MuiInputBase-root': {
@@ -195,21 +199,47 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
 
                     <ExportButtons expenses={expenses} getCategoryName={getCategoryName} />
                 </Box>
-
-                <>
+                <Box>
                     <Tooltip title="Filter Expenses">
                         <Button
+                            onClick={handleFilterOpen}
                             sx={{
                                 backgroundColor: '#130037',
-                                '&:hover': { backgroundColor: '#2d005c' }
+                                '&:hover': { backgroundColor: '#2d005c' },
                             }}
                         >
-                            <Typography variant="caption" sx={{ px: 1, color: 'white', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    px: 1,
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.9rem',
+                                }}
+                            >
                                 Filter
                             </Typography>
                         </Button>
                     </Tooltip>
-                </>
+
+                    <Modal open={filterOpen} onClose={handleFilterClose}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                borderRadius: 2,
+                                p: 3,
+                                outline: 'none',
+                            }}
+                        >
+                            <DateRangeFilter />
+                        </Box>
+                    </Modal>
+                </Box>
             </Box>
 
             <List

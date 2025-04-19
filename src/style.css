@@ -98,3 +98,74 @@ input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
+
+
+/* Date range picker */
+.rdrCalendarWrapper {
+  background-color: white;
+  color: #130037;
+  border-radius: 16px;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.rdrSelected,
+.rdrInRange,
+.rdrStartEdge,
+.rdrEndEdge {
+  background: var(--color-secondary) !important;
+  color: white !important;
+}
+
+.rdrMonthAndYearPickers select,
+.rdrWeekDays span,
+.rdrDayNumber span {
+  color: var(--color-secondary);
+  font-weight: bold;
+}
+
+.rdrMonthAndYearWrapper {
+  background-color: var(--color-primary);
+  border-radius: 12px 12px 0 0;
+  padding: 8px;
+}
+
+.rdrDayToday .rdrDayNumber span:after {
+  background: var(--color-secondary);
+}
+
+.rdrDateDisplayItem input{
+  color: var(--color-button-text);
+}
+
+.rdrDateDisplayItem{
+  background-color: var(--color-secondary);
+  border: none;
+  box-shadow: none;
+}
+
+.rdrDayNumber{
+  color: var(--color-primary) !important;
+}
+
+.rdrDay > * {
+  color: var(--color-secondary) !important;
+}
+
+.rdrInputRange {
+  display: none;
+}
+
+.rdrDefinedRangesWrapper{
+  display: flex;
+  justify-content: space-between;
+  place-items: center;
+  width: 110px;
+}
+
+.rdrCalendarWrapper{
+  box-shadow: none;
+}
+
+.rdrStaticRangeLabel {
+  color: var(--color-secondary);
+}
