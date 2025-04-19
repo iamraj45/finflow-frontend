@@ -1,4 +1,4 @@
-import { Box, useMediaQuery, Alert } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { useState, useEffect } from 'react';
 import MyExpenses from "../components/MyExpenses.jsx";
 import SpendingCharts from "../components/SpendingCharts.jsx";
@@ -12,19 +12,18 @@ export default function Home() {
   const [categoryBudgets, setCategoryBudgets] = useState([]);
   const [overBudget, setOverBudget] = useState({ total: false, categories: [] });
 
+  const [selectedDateRange, setSelectedDateRange] = useState({
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // 1st of this month
+    endDate: new Date(), // today
+  });
+
   const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
 
-const endDate = new Date(); 
-const startDate = new Date();
-startDate.setDate(1);           // Set to 1st of the month
-startDate.setHours(0, 0, 0, 0); // Midnight
-
-const startEpoch = startDate.getTime(); 
-const endEpoch = endDate.getTime(); 
-
   const fetchExpenses = async () => {
     try {
+      const startEpoch = new Date(selectedDateRange.startDate).getTime();
+      const endEpoch = new Date(selectedDateRange.endDate).getTime();
       const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}`);
       setExpenses(response.data);
     } catch (error) {
@@ -36,7 +35,6 @@ const endEpoch = endDate.getTime();
     try {
       const totalBudgetRes = await axios.get(`${apiUrl}/api/getUserData?userId=${userId}`);
       const categoryBudgetRes = await axios.get(`${apiUrl}/api/budgets/getCategoryBudget?userId=${userId}`);
-
       setTotalBudget(totalBudgetRes.data.totalBudget || null);
       setCategoryBudgets(categoryBudgetRes.data || []);
     } catch (error) {
@@ -46,8 +44,7 @@ const endEpoch = endDate.getTime();
 
   useEffect(() => {
     fetchExpenses();
-    fetchBudgets();
-  }, [userId]);
+  }, [userId, selectedDateRange]);
 
   useEffect(() => {
     if (!expenses.length || totalBudget === null) return;
@@ -88,6 +85,8 @@ const endEpoch = endDate.getTime();
           <MyExpenses
             expenses={expenses}
             onExpenseAdded={handleExpenseAdded}
+            selectedDateRange={selectedDateRange}
+            setSelectedDateRange={setSelectedDateRange}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: '400px' }}>

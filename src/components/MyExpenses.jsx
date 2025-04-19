@@ -31,7 +31,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DateRangeFilter from './DateRangeFilter';
 
-const MyExpenses = ({ expenses, onExpenseAdded }) => {
+const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDateRange }) => {
     const [open, setOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const { categories } = useContext(CategoryContext);
@@ -236,7 +236,15 @@ const MyExpenses = ({ expenses, onExpenseAdded }) => {
                                 outline: 'none',
                             }}
                         >
-                            <DateRangeFilter />
+                            <DateRangeFilter
+                                onApply={(range) => {
+                                    setSelectedDateRange({
+                                        startDate: range.startDate,
+                                        endDate: range.endDate,
+                                    });
+                                    handleFilterClose();
+                                }}
+                            />
                         </Box>
                     </Modal>
                 </Box>

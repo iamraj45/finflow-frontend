@@ -1,29 +1,46 @@
 import React, { useState } from 'react';
 import { addDays } from 'date-fns';
 import { DateRangePicker } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // Main style file
-import 'react-date-range/dist/theme/default.css'; // Theme css file
+import { Button, Box } from '@mui/material';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
-const DateRangeFilter = () => {
-  const [state, setState] = useState([
+const DateRangeFilter = ({ onApply }) => {
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const [localRange, setLocalRange] = useState([
     {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
+      startDate: firstDayOfMonth,
+      endDate: today,
       key: 'selection',
     },
   ]);
+  
+  const handleApply = () => {
+    onApply(localRange[0]);
+  };
 
   return (
-    <div>
+    <Box>
       <DateRangePicker
-        onChange={(item) => setState([item.selection])}
+        onChange={(item) => setLocalRange([item.selection])}
         showSelectionPreview={true}
         moveRangeOnFirstSelection={false}
         months={2}
-        ranges={state}
+        ranges={localRange}
         direction="horizontal"
       />
-    </div>
+      <Box textAlign="center" mt={2}>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: '#130037', '&:hover': { backgroundColor: '#2d005c' } }}
+          onClick={handleApply}
+        >
+          Apply Filter
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
