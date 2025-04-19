@@ -15,9 +15,17 @@ export default function Home() {
   const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
 
+const endDate = new Date(); 
+const startDate = new Date();
+startDate.setDate(1);           // Set to 1st of the month
+startDate.setHours(0, 0, 0, 0); // Midnight
+
+const startEpoch = startDate.getTime(); 
+const endEpoch = endDate.getTime(); 
+
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}`);
+      const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}`);
       setExpenses(response.data);
     } catch (error) {
       console.error("Failed to fetch expenses:", error);
