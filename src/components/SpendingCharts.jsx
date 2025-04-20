@@ -120,11 +120,11 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
       ) : (
         <>
           <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>My Spendings</Typography>
+            <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>Monthly Spendings</Typography>
 
             {showTotalAlert && overBudget?.total && (
               <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setShowTotalAlert(false)}>
-                You have exceeded your <strong>total budget</strong> of ₹{totalBudget}
+                You have exceeded your <strong>total monthly budget</strong> of ₹{totalBudget}
               </Alert>
             )}
 
