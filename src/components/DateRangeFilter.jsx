@@ -23,7 +23,14 @@ const DateRangeFilter = ({ onApply }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); // <600px
 
   const handleApply = () => {
-    onApply(localRange[0]);
+    const range = { ...localRange[0] };
+  
+    // Set endDate time to 23:59:59.999 to include the whole day
+    const adjustedEndDate = new Date(range.endDate);
+    adjustedEndDate.setHours(23, 59, 59, 999);
+    range.endDate = adjustedEndDate;
+  
+    onApply(range);
   };  
 
   const handleReset = () => {
