@@ -108,7 +108,7 @@ export default function BudgetPage() {
         {/* Left Section */}
         <Box sx={{ flex: 1, minWidth: '400px', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
           <Paper elevation={2}>
-            <Typography variant="h6" mb={2} gutterBottom>Total Budget</Typography>
+            <Typography variant="h6" mb={2} gutterBottom>Total Monthly Budget</Typography>
             <TextField
               type="number"
               value={localTotalBudget}
@@ -118,7 +118,7 @@ export default function BudgetPage() {
               helperText={localTotalBudget < 0 ? 'Budget must be non-negative' : ''}
             />
 
-            <Typography variant="h6" mt={4} gutterBottom>Category Budgets</Typography>
+            <Typography variant="h6" mt={4} gutterBottom>Budget Settings (Per Category)</Typography>
             {localCategoryBudgets.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 You have not added budget for any categories yet.

@@ -8,6 +8,7 @@ import axios from '../utils/axios';
 export default function Home() {
   const isMobile = useMediaQuery('(max-width:768px)');
   const [expenses, setExpenses] = useState([]);
+  const [chartExpenses, setChartExpenses] = useState([]);
   const [totalBudget, setTotalBudget] = useState(null);
   const [categoryBudgets, setCategoryBudgets] = useState([]);
   const [overBudget, setOverBudget] = useState({ total: false, categories: [] });
@@ -17,17 +18,35 @@ export default function Home() {
     endDate: new Date(), // today
   });
 
+  const defaultChartRange = {
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    endDate: new Date(),
+  };
+
   const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
 
-  const fetchExpenses = async () => {
+  const fetchExpenses = async (range = selectedDateRange) => {
     try {
       const startEpoch = new Date(selectedDateRange.startDate).getTime();
       const endEpoch = new Date(selectedDateRange.endDate).getTime();
       const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}`);
       setExpenses(response.data);
     } catch (error) {
-      console.error("Failed to fetch expenses:", error);
+      console.error("Failed to fetch filtered expenses:", error);
+    }
+  };
+
+  const fetchChartExpenses = async () => {
+    try {
+      const startEpoch = new Date(defaultChartRange.startDate).getTime();
+      const endEpoch = new Date(defaultChartRange.endDate).getTime();
+      const response = await axios.get(
+        `${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}`
+      );
+      setChartExpenses(response.data);
+    } catch (error) {
+      console.error("Failed to fetch chart expenses:", error);
     }
   };
 
@@ -43,14 +62,21 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchExpenses();
+    if (userId) {
+      fetchChartExpenses(); // load once
+      fetchBudgets();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) fetchExpenses(); // re-run only when filter is applied
   }, [userId, selectedDateRange]);
 
   useEffect(() => {
-    if (!expenses.length || totalBudget === null) return;
+    if (!chartExpenses.length || totalBudget === null) return;
 
-    const totalSpent = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-    const categoryTotals = expenses.reduce((acc, exp) => {
+    const totalSpent = chartExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const categoryTotals = chartExpenses.reduce((acc, exp) => {
       acc[exp.categoryId] = (acc[exp.categoryId] || 0) + exp.amount;
       return acc;
     }, {});
@@ -64,10 +90,11 @@ export default function Home() {
       total: totalSpent > totalBudget,
       categories: crossedCategories.map(cat => cat.categoryId),
     });
-  }, [expenses, totalBudget, categoryBudgets]);
+  }, [chartExpenses, totalBudget, categoryBudgets]);
 
   const handleExpenseAdded = () => {
     fetchExpenses();
+    fetchChartExpenses();
   };
 
   return (
@@ -91,7 +118,7 @@ export default function Home() {
         </Box>
         <Box sx={{ flex: 1, minWidth: '400px' }}>
           <SpendingCharts
-            expenses={expenses}
+            expenses={chartExpenses}
             totalBudget={totalBudget}
             categoryBudgets={categoryBudgets}
             overBudget={overBudget}
