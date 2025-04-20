@@ -49,6 +49,9 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
     const handleFilterOpen = () => setFilterOpen(true);
     const handleFilterClose = () => setFilterOpen(false);
 
+    const [categoryFilterOpen, setCategoryFilterOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('');
+
     const apiUrl = import.meta.env.VITE_API_URL;
 
     const inputSx = {
@@ -199,7 +202,28 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
 
                     <ExportButtons expenses={expenses} getCategoryName={getCategoryName} />
                 </Box>
-                <Box>
+                <Box display="flex" gap={2} alignItems="center">
+                    <Tooltip title="Filter By Category">
+                        <Button
+                            onClick={() => setCategoryFilterOpen(true)}
+                            sx={{
+                                backgroundColor: '#130037',
+                                '&:hover': { backgroundColor: '#2d005c' },
+                            }}
+                        >
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    px: 1,
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.9rem',
+                                }}
+                            >
+                                Filter By Category
+                            </Typography>
+                        </Button>
+                    </Tooltip>
                     <Tooltip title="Filter Expenses">
                         <Button
                             onClick={handleFilterOpen}
@@ -247,6 +271,68 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                             />
                         </Box>
                     </Modal>
+
+                    <Modal open={categoryFilterOpen} onClose={() => setCategoryFilterOpen(false)}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                borderRadius: 2,
+                                p: 3,
+                                outline: 'none',
+                                minWidth: 300,
+                            }}
+                        >
+                            <Typography variant="h6" gutterBottom>
+                                Select Category
+                            </Typography>
+                            <Select
+                                fullWidth
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                            >
+                                {categories.map((cat) => (
+                                    <MenuItem key={cat.id} value={cat.name}>
+                                        {cat.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+
+                            <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => setCategoryFilterOpen(false)}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#130037', '&:hover': { backgroundColor: '#2d005c' } }}
+                                    onClick={() => {
+                                        // 🔁 Dummy API call (you'll replace this)
+                                        const dummyUserId = 12;
+                                        const startDate = selectedDateRange.startDate.getTime();
+                                        const endDate = selectedDateRange.endDate.getTime();
+
+                                        console.log("Fetching expenses for category:", selectedCategory);
+                                        console.log("Date Range:", startDate, "to", endDate);
+
+                                        // 👇 Replace with actual API call later
+                                        // axios.get(`/api/expenses/byCategory?userId=${dummyUserId}&category=${selectedCategory}&startDate=${startDate}&endDate=${endDate}`)
+
+                                        setCategoryFilterOpen(false);
+                                    }}
+                                >
+                                    Apply
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Modal>
+
                 </Box>
             </Box>
 
