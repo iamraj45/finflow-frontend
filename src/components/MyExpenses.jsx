@@ -58,9 +58,9 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
         backgroundColor: 'var(--color-secondary)',
         color: 'white',
         '&:hover': {
-          backgroundColor: '#2d005c',
+            backgroundColor: '#2d005c',
         },
-      };
+    };
 
     const toggleDeleteMode = () => {
         setDeleteMode(prev => !prev);
@@ -379,7 +379,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                         <Tooltip title="Cancel">
                                             <IconButton
                                                 size="small"
-                                                sx={{...commonIconButtonStyles, ml: 2 }}
+                                                sx={{ ...commonIconButtonStyles, ml: 2 }}
                                                 onClick={() => setEditingExpenseId(null)}
                                             >
                                                 <CancelIcon />
@@ -442,13 +442,13 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
                     width: '90%',
-                    maxWidth: 500,
+                    maxWidth: 400,
                     bgcolor: 'background.paper',
                     boxShadow: 24,
                     p: 3,
                     borderRadius: 2
                 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
                             <Typography variant="h5" sx={{ color: 'var(--color-secondary)', fontWeight: 'bold', fontFamily: 'sans-serif' }}>
                                 Add New Expense

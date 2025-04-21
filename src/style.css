@@ -1,6 +1,6 @@
 :root {
   --color-primary: #ffffff;
-  --color-secondary: #140038  ;
+  --color-secondary: #140038;
   --color-input-bg: #f9f9f9;
   --color-button-text: #ffffff;
 }
@@ -26,11 +26,11 @@ body {
   padding: 15px 5px !important;
 } */
 
-.MuiPaper-root{
+.MuiPaper-root {
   box-shadow: none !important;
 }
 
-.MuiToolbar-root{
+.MuiToolbar-root {
   padding: 0 16px 0 8px !important;
 }
 
@@ -65,13 +65,34 @@ body {
   color: var(--color-button-text) !important;
 }
 
-.MuiMenu-paper {
+/* .MuiMenu-paper {
+  border: 1px solid var(--color-secondary);
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+} */
+
+/* Dropdown list */
+.MuiMenu-list {
+  border: 2px solid var(--color-secondary) !important;
+  border-radius: 4px !important;
   background-color: var(--color-primary) !important;
   color: var(--color-secondary) !important;
 }
 
-.MuiPickersDay-root {
-  color: var(--color-secondary) !important;
+/* Dropdoen list items */
+.MuiMenuItem-root:hover {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-primary) !important;
+}
+
+.Mui-selected {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-primary) !important;
+}
+
+.MuiDateCalendar-root {
+  border: 2px solid var(--color-secondary);
+  border-radius: 4px;
 }
 
 .MuiPickersDay-today {
@@ -94,6 +115,7 @@ input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
@@ -133,21 +155,21 @@ input[type="number"] {
   background: var(--color-secondary);
 }
 
-.rdrDateDisplayItem input{
+.rdrDateDisplayItem input {
   color: var(--color-button-text);
 }
 
-.rdrDateDisplayItem{
+.rdrDateDisplayItem {
   background-color: var(--color-secondary);
   border: none;
   box-shadow: none;
 }
 
-.rdrDayNumber{
+.rdrDayNumber {
   color: var(--color-primary) !important;
 }
 
-.rdrDay > * {
+.rdrDay>* {
   color: var(--color-secondary) !important;
 }
 
@@ -155,14 +177,14 @@ input[type="number"] {
   display: none;
 }
 
-.rdrDefinedRangesWrapper{
+.rdrDefinedRangesWrapper {
   display: flex;
   justify-content: space-between;
   place-items: center;
   width: 110px;
 }
 
-.rdrCalendarWrapper{
+.rdrCalendarWrapper {
   box-shadow: none;
 }
 
