@@ -21,7 +21,7 @@ export default function Home() {
 
   const defaultChartRange = {
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    endDate: new Date(),
+    endDate: new Date().setHours(23,59,59,999),
   };
 
   const apiUrl = import.meta.env.VITE_API_URL;
