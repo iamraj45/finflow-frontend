@@ -58,8 +58,6 @@ export default function Home() {
       }
 
       const response = await axios.get(url);
-      console.log("Fetched expenses:", response.data);
-      console.log("Total pages:", response.data.totalPage);
       setExpenses(response.data || []);
       setTotalPages(response.data[0].totalPage || 1);
     } catch (error) {

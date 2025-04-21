@@ -13,6 +13,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DateRangeFilter from './DateRangeFilter';
 import CategoryFilter from './CategoryFilter';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDateRange, selectedCategory, setSelectedCategory, onApplyCategoryFilter, onClearCategoryFilter, totalPages, pageNo, setPageNo }) => {
     const [open, setOpen] = useState(false);
@@ -186,46 +188,30 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                 </Box>
                 <Box display="flex" gap={2} alignItems="center">
                     <Tooltip title="Filter By Category">
-                        <Button
+                        <IconButton
+                            size='small'
                             onClick={() => setCategoryFilterOpen(true)}
                             sx={{
                                 backgroundColor: 'var(--color-secondary)',
-                                '&:hover': { backgroundColor: '#2d005c' },
+                                color: 'white',
+                                '&:hover': { backgroundColor: '#2d005c' }
                             }}
                         >
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    px: 1,
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    fontSize: '0.9rem',
-                                }}
-                            >
-                                Filter By Category
-                            </Typography>
-                        </Button>
+                            <FilterAltIcon />
+                        </IconButton>
                     </Tooltip>
-                    <Tooltip title="Filter Expenses">
-                        <Button
+                    <Tooltip title="Filter By Date">
+                        <IconButton
+                            size='small'
                             onClick={handleFilterOpen}
                             sx={{
                                 backgroundColor: 'var(--color-secondary)',
-                                '&:hover': { backgroundColor: '#2d005c' },
+                                color: 'white',
+                                '&:hover': { backgroundColor: '#2d005c' }
                             }}
                         >
-                            <Typography
-                                variant="caption"
-                                sx={{
-                                    px: 1,
-                                    color: 'white',
-                                    fontWeight: 'bold',
-                                    fontSize: '0.9rem',
-                                }}
-                            >
-                                Filter
-                            </Typography>
-                        </Button>
+                            <EditCalendarIcon />
+                        </IconButton>
                     </Tooltip>
 
                     <Modal open={filterOpen} onClose={handleFilterClose}>
@@ -462,7 +448,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                         page={pageNo}
                         onChange={(event, value) => setPageNo(value)}
                         sx={{
-                            '& .Mui-selected': {
+                            '& .MuiPaginationItem-root.Mui-selected': {
                                 backgroundColor: 'var(--color-secondary)',
                                 color: 'white',
                                 '&:hover': {
