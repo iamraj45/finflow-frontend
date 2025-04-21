@@ -112,16 +112,15 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
   });
 
   return (
-    <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 2 }}>
+    <Box sx={{ textAlign: 'left', border: '1px solid #ccc', p: 4 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>Monthly Spendings</Typography>
       {expenses.length === 0 ? (
         <Typography variant="h5" color="textSecondary" sx={{ py: 5 }}>
           No expenses found. Start by adding some to view your charts!
         </Typography>
       ) : (
         <>
-          <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>Monthly Spendings</Typography>
-
+          <Box sx={{ mb: 2 }}>
             {showTotalAlert && overBudget?.total && (
               <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setShowTotalAlert(false)}>
                 You have exceeded your <strong>total monthly budget</strong> of ₹{totalBudget}
@@ -133,47 +132,56 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
                 Budget limit exceeded for: <strong>{overLimitCategories.join(', ')}</strong>
               </Alert>
             )}
-
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={transformedData}>
-                <CartesianGrid strokeDasharray="4 4" />
-                <XAxis dataKey="category" interval={0} angle={-30} textAnchor="end" height={80} />
-                <YAxis />
-                <Tooltip />
-                <Legend
-                  content={() => (
-                    <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <div style={{ width: 14, height: 14, backgroundColor: '#6a1b9a' /* or COLORS[0] */ }}></div>
-                        <span>Within Budget</span>
+            <Box mt={4} sx={{
+              border: '1px solid #ddd',
+              borderRadius: 2,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              transition: 'all 0.2s',
+              '&:hover': {
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              },
+            }}>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={transformedData}>
+                  <CartesianGrid strokeDasharray="4 4" />
+                  <XAxis dataKey="category" interval={0} angle={-30} textAnchor="end" height={80} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend
+                    content={() => (
+                      <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <div style={{ width: 14, height: 14, backgroundColor: '#6a1b9a' /* or COLORS[0] */ }}></div>
+                          <span>Within Budget</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <div style={{ width: 14, height: 14, backgroundColor: '#d32f2f' }}></div>
+                          <span>Over Budget</span>
+                        </div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <div style={{ width: 14, height: 14, backgroundColor: '#d32f2f' }}></div>
-                        <span>Over Budget</span>
-                      </div>
-                    </div>
-                  )}
-                />
+                    )}
+                  />
 
-                <Bar dataKey="withinBudget" name="Within Budget" stackId="a">
-                  {transformedData.map((entry, index) => (
-                    <Cell
-                      key={`cell-wb-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Bar>
+                  <Bar dataKey="withinBudget" name="Within Budget" stackId="a">
+                    {transformedData.map((entry, index) => (
+                      <Cell
+                        key={`cell-wb-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
 
-                <Bar dataKey="overBudget" name="Over Budget" stackId="a">
-                  {transformedData.map((entry, index) => (
-                    <Cell
-                      key={`cell-ob-${index}`}
-                      fill={entry.hasBudget ? '#d32f2f' : COLORS[index % COLORS.length]} // fallback to same color if no budget
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                  <Bar dataKey="overBudget" name="Over Budget" stackId="a">
+                    {transformedData.map((entry, index) => (
+                      <Cell
+                        key={`cell-ob-${index}`}
+                        fill={entry.hasBudget ? '#d32f2f' : COLORS[index % COLORS.length]} // fallback to same color if no budget
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
 
             {/* <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -192,43 +200,54 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
                 <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
               </PieChart>
             </ResponsiveContainer> */}
-          </Paper>
+          </Box>
 
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h4" gutterBottom>Last 7 Days Spendings</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={dateData}>
-                <CartesianGrid strokeDasharray="4 4" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip
-                  formatter={(value, name, props) =>
-                    props.payload.isMax
-                      ? [`₹${value} (Highest)`, name]
-                      : [`₹${value}`, name]
-                  }
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="Amount"
-                  stroke="#6a1b9a"
-                  strokeWidth={2}
-                  dot={({ cx, cy, payload, index }) => (
-                    <circle
-                      key={`dot-${index}`}
-                      cx={cx}
-                      cy={cy}
-                      r={5}
-                      fill={payload.isMax ? '#d32f2f' : '#6a1b9a'}
-                      stroke="#fff"
-                      strokeWidth={1}
-                    />
-                  )}                  
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h5" gutterBottom>Last 7 Days Spendings</Typography>
+            <Box mt={2} sx={{
+              border: '1px solid #ddd',
+              borderRadius: 2,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              transition: 'all 0.2s',
+              '&:hover': {
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              },
+            }}
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={dateData}>
+                  <CartesianGrid strokeDasharray="4 4" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value, name, props) =>
+                      props.payload.isMax
+                        ? [`₹${value} (Highest)`, name]
+                        : [`₹${value}`, name]
+                    }
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="Amount"
+                    stroke="#6a1b9a"
+                    strokeWidth={2}
+                    dot={({ cx, cy, payload, index }) => (
+                      <circle
+                        key={`dot-${index}`}
+                        cx={cx}
+                        cy={cy}
+                        r={5}
+                        fill={payload.isMax ? '#d32f2f' : '#6a1b9a'}
+                        stroke="#fff"
+                        strokeWidth={1}
+                      />
+                    )}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Box>
+          </Box>
         </>
       )}
     </Box>

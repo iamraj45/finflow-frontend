@@ -135,9 +135,9 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
     };
 
     return (
-        <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+        <Box sx={{ textAlign: 'center', border: '1px solid #ccc', p: 4 }}>
             {/* Title */}
-            <Typography variant="h4" sx={{ textAlign: 'center', mb: 2 }}>
+            <Typography variant="h5" sx={{ textAlign: 'left', mb: 3 }}>
                 My Expenses
             </Typography>
 
@@ -267,21 +267,29 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                         maxWidth: 800,
                         mx: 'auto',
                         mb: 3,
-                        maxHeight: '60vh',
                         overflowY: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
                     }}
                 >
                     {expenses.map((expense) => (
                         <ListItem
                             key={expense.id}
-                            divider
                             sx={{
-                                position: 'relative',
+                                border: '1px solid #ddd',
+                                borderRadius: 2,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                paddingY: 1,
+                                paddingX: 2,
+                                backgroundColor: '#fff',
+                                transition: 'all 0.2s',
+                                '&:hover': {
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                },
                                 '&:hover .edit-icon': {
                                     opacity: 1,
                                 },
-                                paddingRight: 0,
-                                paddingLeft: 0,
                             }}
                         >
                             {deleteMode && (
@@ -336,10 +344,14 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                         </FormControl>
                                     </Box>
                                 ) : (
-                                    <ListItemText
-                                        primary={`${getCategoryName(expense.categoryId)}: ₹${expense.amount}`}
-                                        secondary={expense.description}
-                                    />
+                                    <Box sx={{ flexGrow: 1 }}>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                                            {getCategoryName(expense.categoryId)}: ₹{expense.amount}
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {expense.description}
+                                        </Typography>
+                                    </Box>
                                 )}
                             </Box>
 
@@ -347,7 +359,8 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                 sx={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: 1,
+                                    ml: 2,
+                                    mr: 2,
                                     minWidth: 140,
                                     justifyContent: 'flex-end',
                                 }}
@@ -361,7 +374,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                         {new Date(expense.date).toLocaleDateString('en-US', {
                                             year: 'numeric',
                                             month: 'long',
-                                            day: 'numeric'
+                                            day: 'numeric'  
                                         })}
                                     </Typography>
                                 )}
@@ -395,7 +408,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                                 ...commonIconButtonStyles,
                                                 opacity: 0,
                                                 transition: 'opacity 0.3s',
-                                                ml: 1,
+                                                ml: 3,
                                             }}
                                             onClick={() => {
                                                 setEditingExpenseId(expense.id);
