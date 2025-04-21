@@ -54,6 +54,14 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
         }
     };
 
+    const commonIconButtonStyles = {
+        backgroundColor: 'var(--color-secondary)',
+        color: 'white',
+        '&:hover': {
+          backgroundColor: '#2d005c',
+        },
+      };
+
     const toggleDeleteMode = () => {
         setDeleteMode(prev => !prev);
         setSelectedExpenses([]); // Clear selection when toggled
@@ -149,11 +157,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                         <IconButton
                             size='small'
                             onClick={handleOpen}
-                            sx={{
-                                backgroundColor: 'var(--color-secondary)',
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#2d005c' }
-                            }}
+                            sx={commonIconButtonStyles}
                         >
                             <AddIcon />
                         </IconButton>
@@ -174,11 +178,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                             size='small'
                             color={deleteMode ? "error" : "default"}
                             onClick={toggleDeleteMode}
-                            sx={{
-                                backgroundColor: 'var(--color-secondary)',
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#2d005c' }
-                            }}
+                            sx={commonIconButtonStyles}
                         >
                             <DeleteIcon />
                         </IconButton>
@@ -191,11 +191,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                         <IconButton
                             size='small'
                             onClick={() => setCategoryFilterOpen(true)}
-                            sx={{
-                                backgroundColor: 'var(--color-secondary)',
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#2d005c' }
-                            }}
+                            sx={commonIconButtonStyles}
                         >
                             <FilterAltIcon />
                         </IconButton>
@@ -204,11 +200,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                         <IconButton
                             size='small'
                             onClick={handleFilterOpen}
-                            sx={{
-                                backgroundColor: 'var(--color-secondary)',
-                                color: 'white',
-                                '&:hover': { backgroundColor: '#2d005c' }
-                            }}
+                            sx={commonIconButtonStyles}
                         >
                             <EditCalendarIcon />
                         </IconButton>
@@ -378,13 +370,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                         <Tooltip title="Save">
                                             <IconButton
                                                 size="small"
-                                                sx={{
-                                                    backgroundColor: 'var(--color-secondary)',
-                                                    color: 'white',
-                                                    '&:hover': {
-                                                        backgroundColor: '#2d005c',
-                                                    }
-                                                }}
+                                                sx={commonIconButtonStyles}
                                                 onClick={handleSave}
                                             >
                                                 <SaveIcon />
@@ -393,14 +379,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                         <Tooltip title="Cancel">
                                             <IconButton
                                                 size="small"
-                                                sx={{
-                                                    backgroundColor: 'var(--color-secondary)',
-                                                    color: 'white',
-                                                    ml: 2,
-                                                    '&:hover': {
-                                                        backgroundColor: '#2d005c',
-                                                    }
-                                                }}
+                                                sx={commonIconButtonStyles}
                                                 onClick={() => setEditingExpenseId(null)}
                                             >
                                                 <CancelIcon />
