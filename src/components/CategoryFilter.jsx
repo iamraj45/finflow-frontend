@@ -37,9 +37,6 @@ const CategoryFilter = ({
           minWidth: 300,
         }}
       >
-        <Typography variant="h6" gutterBottom>
-          Select Category
-        </Typography>
         <Select
           fullWidth
           displayEmpty
@@ -50,7 +47,7 @@ const CategoryFilter = ({
           }}
         >
           <MenuItem value="" disabled>
-            Select
+            Select Category
           </MenuItem>
           {categories.map((cat) => (
             <MenuItem key={cat.id} value={cat.id}>
@@ -59,12 +56,13 @@ const CategoryFilter = ({
           ))}
         </Select>
 
-        <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
-          <Button variant="outlined" onClick={onClose}>
+        <Box mt={3} display="flex" justifyContent="center" gap={2}>
+          <Button variant="outlined" fullWidth onClick={onClose}>
             Cancel
           </Button>
           <Button
             variant="contained"
+            fullWidth
             sx={{ backgroundColor: '#130037', '&:hover': { backgroundColor: '#2d005c' } }}
             disabled={!localSelectedCategory}
             onClick={() => {
