@@ -42,12 +42,16 @@ const CategoryFilter = ({
         </Typography>
         <Select
           fullWidth
+          displayEmpty
           value={localSelectedCategory?.id || ''}
           onChange={(e) => {
             const selected = categories.find(cat => cat.id === e.target.value);
             setLocalSelectedCategory(selected);
           }}
         >
+          <MenuItem value="" disabled>
+            Select
+          </MenuItem>
           {categories.map((cat) => (
             <MenuItem key={cat.id} value={cat.id}>
               {cat.name}
