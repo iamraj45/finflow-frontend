@@ -336,6 +336,11 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                 </Box>
             </Box>
 
+            {expenses.length === 0 ? (
+                <Typography align="center" color="textSecondary" mt={2}>
+                    No expenses to display.
+                </Typography>
+            ) : (
             <List
                 sx={{
                     maxWidth: 800,
@@ -506,6 +511,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                     </ListItem>
                 ))}
             </List>
+            )}
 
             <Modal open={open} onClose={handleClose}>
                 <Paper sx={{
