@@ -263,6 +263,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                             }}
                         >
                             <DateRangeFilter
+                                selectedDateRange={selectedDateRange}
                                 onApply={(range) => {
                                     setSelectedDateRange({
                                         startDate: range.startDate,

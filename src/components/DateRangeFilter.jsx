@@ -1,49 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import { Button, Box, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
-const DateRangeFilter = ({ onApply }) => {
+const DateRangeFilter = ({ onApply, selectedDateRange }) => {
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
   const [localRange, setLocalRange] = useState([
     {
-      startDate: firstDayOfMonth,
-      endDate: today,
+      startDate: selectedDateRange?.startDate || firstDayOfMonth,
+      endDate: selectedDateRange?.endDate || today,
       key: 'selection',
     },
   ]);
 
   const [isCleared, setIsCleared] = useState(false);
-
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); // <600px
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Sync prop changes to internal state
+  useEffect(() => {
+    if (selectedDateRange?.startDate && selectedDateRange?.endDate) {
+      setLocalRange([
+        {
+          startDate: selectedDateRange.startDate,
+          endDate: selectedDateRange.endDate,
+          key: 'selection',
+        },
+      ]);
+    }
+  }, [selectedDateRange]);
 
   const handleApply = () => {
     const range = { ...localRange[0] };
-  
-    // Set endDate time to 23:59:59.999 to include the whole day
     const adjustedEndDate = new Date(range.endDate);
     adjustedEndDate.setHours(23, 59, 59, 999);
     range.endDate = adjustedEndDate;
-  
     onApply(range);
-  };  
+  };
 
   const handleReset = () => {
     const startOfToday = new Date(today);
     startOfToday.setHours(0, 0, 0, 0);
-  
-    setLocalRange([
-      {
-        startDate: startOfToday,
-        endDate: today,
-        key: 'selection',
-      },
-    ]);
+
+    const defaultRange = {
+      startDate: startOfToday,
+      endDate: today,
+      key: 'selection',
+    };
+
+    setLocalRange([defaultRange]);
     setIsCleared(true);
   };
 
