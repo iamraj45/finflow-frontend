@@ -30,7 +30,7 @@ export default function Home() {
     try {
       const startEpoch = new Date(selectedDateRange.startDate).getTime();
       const endEpoch = new Date(selectedDateRange.endDate).getTime();
-      const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}`);
+      const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}&pageNo=1&pageSize=10`);
       setExpenses(response.data);
     } catch (error) {
       console.error("Failed to fetch filtered expenses:", error);
