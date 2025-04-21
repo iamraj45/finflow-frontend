@@ -15,13 +15,17 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const [selectedDateRange, setSelectedDateRange] = useState({
-    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // 1st of this month
-    endDate: new Date().setHours(23,59,59,999), // today
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    endDate: new Date().setHours(23, 59, 59, 999),
   });
+
+  const [pageNo, setPageNo] = useState(1);
+  const pageSize = 5;
+  const [totalPages, setTotalPages] = useState(1);
 
   const defaultChartRange = {
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    endDate: new Date().setHours(23,59,59,999),
+    endDate: new Date().setHours(23, 59, 59, 999),
   };
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -29,27 +33,35 @@ export default function Home() {
 
   const handleCategoryFilterApply = (categoryId, categoryName) => {
     setSelectedCategory({ id: categoryId, name: categoryName });
-    fetchExpenses(selectedDateRange, categoryId);
-  };  
+    setPageNo(1);
+    fetchExpenses(selectedDateRange, categoryId, 1);
+  };
 
   const handleClearCategoryFilter = () => {
     setSelectedCategory(null);
-    fetchExpenses(selectedDateRange, null);  // no categoryId now
+    setPageNo(1);
+    fetchExpenses(selectedDateRange, null, 1);
   };
 
-  const fetchExpenses = async (range = selectedDateRange, categoryId = selectedCategory?.id) => {
+  const fetchExpenses = async (
+    range = selectedDateRange,
+    categoryId = selectedCategory?.id,
+    currentPage = pageNo
+  ) => {
     try {
       const startEpoch = new Date(range.startDate).getTime();
       const endEpoch = new Date(range.endDate).getTime();
 
-      let url = `${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}&pageNo=1&pageSize=10`;
-
+      let url = `${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}&pageNo=${currentPage}&pageSize=${pageSize}`;
       if (categoryId) {
         url += `&categoryId=${categoryId}`;
       }
 
       const response = await axios.get(url);
-      setExpenses(response.data);
+      console.log("Fetched expenses:", response.data);
+      console.log("Total pages:", response.data.totalPage);
+      setExpenses(response.data || []);
+      setTotalPages(response.data[0].totalPage || 1);
     } catch (error) {
       console.error("Failed to fetch filtered expenses:", error);
     }
@@ -87,8 +99,10 @@ export default function Home() {
   }, [userId]);
 
   useEffect(() => {
-    if (userId) fetchExpenses();
-  }, [userId, selectedDateRange]);
+    if (userId) {
+      fetchExpenses(selectedDateRange, selectedCategory?.id, pageNo);
+    }
+  }, [userId, selectedDateRange, selectedCategory, pageNo]);
 
   useEffect(() => {
     if (!chartExpenses.length || totalBudget === null) return;
@@ -111,7 +125,7 @@ export default function Home() {
   }, [chartExpenses, totalBudget, categoryBudgets]);
 
   const handleExpenseAdded = () => {
-    fetchExpenses();
+    fetchExpenses(selectedDateRange, selectedCategory?.id, pageNo);
     fetchChartExpenses();
   };
 
@@ -136,6 +150,9 @@ export default function Home() {
             setSelectedCategory={setSelectedCategory}
             onApplyCategoryFilter={handleCategoryFilterApply}
             onClearCategoryFilter={handleClearCategoryFilter}
+            pageNo={pageNo}
+            setPageNo={setPageNo}
+            totalPages={totalPages}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: '400px' }}>

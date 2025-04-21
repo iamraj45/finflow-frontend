@@ -1,25 +1,5 @@
 import React, { useState, useContext } from 'react';
-import {
-    Box,
-    TextField,
-    Typography,
-    Tooltip,
-    Modal,
-    IconButton,
-    Paper,
-    List,
-    ListItem,
-    ListItemText,
-    Snackbar,
-    Alert,
-    MenuItem,
-    FormControl,
-    Button,
-    InputLabel,
-    Select,
-    Chip,
-    Stack,
-} from '@mui/material';
+import { Box, TextField, Typography, Tooltip, Modal, IconButton, Paper, List, ListItem, ListItemText, Snackbar, Alert, MenuItem, FormControl, Button, InputLabel, Select, Chip, Stack, Pagination } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import AddExpenseForm from './AddExpenseForm';
@@ -34,7 +14,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import DateRangeFilter from './DateRangeFilter';
 import CategoryFilter from './CategoryFilter';
 
-const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDateRange, selectedCategory, setSelectedCategory, onApplyCategoryFilter, onClearCategoryFilter }) => {
+const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDateRange, selectedCategory, setSelectedCategory, onApplyCategoryFilter, onClearCategoryFilter, totalPages, pageNo, setPageNo }) => {
     const [open, setOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const { categories } = useContext(CategoryContext);
@@ -474,6 +454,24 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                         </ListItem>
                     ))}
                 </List>
+            )}
+            {totalPages > 1 && (
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Pagination
+                        count={totalPages}
+                        page={pageNo}
+                        onChange={(event, value) => setPageNo(value)}
+                        sx={{
+                            '& .Mui-selected': {
+                                backgroundColor: 'var(--color-secondary)',
+                                color: 'white',
+                                '&:hover': {
+                                    backgroundColor: '#2d005c',
+                                },
+                            },
+                        }}
+                    />
+                </Box>
             )}
 
             <Modal open={open} onClose={handleClose}>
