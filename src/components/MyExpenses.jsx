@@ -276,9 +276,8 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                     <CategoryFilter
                         open={categoryFilterOpen}
                         onClose={() => setCategoryFilterOpen(false)}
-                        selectedCategory={selectedCategory}
-                        setSelectedCategory={setSelectedCategory}
-                        onApply={() => {
+                        onApply={(selectedCategory) => {
+                            setSelectedCategory(selectedCategory);
                             onApplyCategoryFilter(selectedCategory.id, selectedCategory.name);
                             setCategoryFilterOpen(false);
                         }}
