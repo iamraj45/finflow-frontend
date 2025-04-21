@@ -16,7 +16,7 @@ export default function Home() {
 
   const [selectedDateRange, setSelectedDateRange] = useState({
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // 1st of this month
-    endDate: new Date(), // today
+    endDate: new Date().setHours(23,59,59,999), // today
   });
 
   const defaultChartRange = {
