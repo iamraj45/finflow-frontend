@@ -244,7 +244,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                 </Box>
             </Box>
             {selectedCategory && selectedCategory.name && (
-                <Stack direction="row" spacing={1} mb={2}>
+                <Stack direction="row" spacing={1} mb={2} justifyContent="flex-end">
                     <Chip
                         label={`Category: ${selectedCategory.name}`}
                         onDelete={onClearCategoryFilter}
@@ -379,7 +379,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                         <Tooltip title="Cancel">
                                             <IconButton
                                                 size="small"
-                                                sx={commonIconButtonStyles}
+                                                sx={{...commonIconButtonStyles, ml: 2 }}
                                                 onClick={() => setEditingExpenseId(null)}
                                             >
                                                 <CancelIcon />
@@ -392,14 +392,10 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                             className="edit-icon"
                                             size="small"
                                             sx={{
+                                                ...commonIconButtonStyles,
                                                 opacity: 0,
                                                 transition: 'opacity 0.3s',
-                                                backgroundColor: 'var(--color-secondary)',
-                                                color: 'white',
                                                 ml: 1,
-                                                '&:hover': {
-                                                    backgroundColor: '#2d005c',
-                                                }
                                             }}
                                             onClick={() => {
                                                 setEditingExpenseId(expense.id);
