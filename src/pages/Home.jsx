@@ -12,6 +12,7 @@ export default function Home() {
   const [totalBudget, setTotalBudget] = useState(null);
   const [categoryBudgets, setCategoryBudgets] = useState([]);
   const [overBudget, setOverBudget] = useState({ total: false, categories: [] });
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const [selectedDateRange, setSelectedDateRange] = useState({
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // 1st of this month
@@ -26,11 +27,28 @@ export default function Home() {
   const apiUrl = import.meta.env.VITE_API_URL;
   const userId = localStorage.getItem("userId");
 
-  const fetchExpenses = async (range = selectedDateRange) => {
+  const handleCategoryFilterApply = (categoryId, categoryName) => {
+    setSelectedCategory({ id: categoryId, name: categoryName });
+    fetchExpenses(selectedDateRange, categoryId);
+  };  
+
+  const handleClearCategoryFilter = () => {
+    setSelectedCategory(null);
+    fetchExpenses(selectedDateRange, null);  // no categoryId now
+  };
+
+  const fetchExpenses = async (range = selectedDateRange, categoryId = selectedCategory?.id) => {
     try {
-      const startEpoch = new Date(selectedDateRange.startDate).getTime();
-      const endEpoch = new Date(selectedDateRange.endDate).getTime();
-      const response = await axios.get(`${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}&pageNo=1&pageSize=10`);
+      const startEpoch = new Date(range.startDate).getTime();
+      const endEpoch = new Date(range.endDate).getTime();
+
+      let url = `${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}&pageNo=1&pageSize=10`;
+
+      if (categoryId) {
+        url += `&categoryId=${categoryId}`;
+      }
+
+      const response = await axios.get(url);
       setExpenses(response.data);
     } catch (error) {
       console.error("Failed to fetch filtered expenses:", error);
@@ -69,7 +87,7 @@ export default function Home() {
   }, [userId]);
 
   useEffect(() => {
-    if (userId) fetchExpenses(); // re-run only when filter is applied
+    if (userId) fetchExpenses();
   }, [userId, selectedDateRange]);
 
   useEffect(() => {
@@ -114,6 +132,10 @@ export default function Home() {
             onExpenseAdded={handleExpenseAdded}
             selectedDateRange={selectedDateRange}
             setSelectedDateRange={setSelectedDateRange}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            onApplyCategoryFilter={handleCategoryFilterApply}
+            onClearCategoryFilter={handleClearCategoryFilter}
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: '400px' }}>
