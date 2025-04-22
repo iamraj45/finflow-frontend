@@ -1,22 +1,40 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { Alert, Box, Typography } from "@mui/material";
 import {
-  PieChart, Pie, Cell, Tooltip,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer,
-  LineChart, Line
-} from 'recharts';
-import { Box, Typography, Paper, Alert } from '@mui/material';
-import { CategoryContext } from '../context/CategoryContext';
+  BarChart,
+  LineChart,
+  PieChart
+} from "@mui/x-charts";
+import React, { useContext, useEffect, useState } from "react";
+import { CategoryContext } from "../context/CategoryContext";
 
-function generateShades(baseColor, count) {
-  const shades = [];
-  for (let i = 0; i < count; i++) {
-    const lightness = 10 + i * (70 / count);
-    shades.push(`hsl(270, 100%, ${lightness}%)`);
+function generateColors(count) {
+  const colors = [];
+  const avoidRedRanges = [
+    [0, 20],
+    [340, 360],
+  ];
+
+  let hueStep = 360 / (count * 1.2);
+  let hue = 0;
+  while (colors.length < count) {
+    const inRedRange = avoidRedRanges.some(
+      ([min, max]) => hue >= min && hue <= max
+    );
+    if (!inRedRange) {
+      colors.push(`hsl(${Math.round(hue)}, 80%, 50%)`);
+    }
+    hue += hueStep;
+    if (hue > 360) hue -= 360; // wrap around
   }
-  return shades;
+  return colors;
 }
 
-const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) => {
+const SpendingCharts = ({
+  expenses,
+  totalBudget,
+  categoryBudgets,
+  overBudget,
+}) => {
   const [categoryData, setCategoryData] = useState([]);
   const [dateData, setDateData] = useState([]);
   const { categories } = useContext(CategoryContext);
@@ -29,76 +47,75 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
     const categoryMap = {};
     let totalAmount = 0;
 
-    expenses.forEach(exp => {
+    expenses.forEach((exp) => {
       totalAmount += exp.amount;
-      categoryMap[exp.categoryId] = (categoryMap[exp.categoryId] || 0) + exp.amount;
+      categoryMap[exp.categoryId] =
+        (categoryMap[exp.categoryId] || 0) + exp.amount;
     });
 
-    const categoryWise = Object.entries(categoryMap).map(([id, amt]) => {
-      const categoryName = categories.find(cat => cat.id === parseInt(id))?.name || 'Unknown';
-      return {
-        categoryId: id,
-        category: categoryName,
-        amount: amt,
-        percentage: totalAmount > 0 ? (amt / totalAmount) * 100 : 0,
-      };
-    }).filter(entry => entry.percentage > 0);
-
-    // const dateWise = expenses.reduce((acc, exp) => {
-    //   const dateStr = new Date(exp.date).toISOString().split('T')[0];
-    //   const existing = acc.find(item => item.date === dateStr);
-    //   if (existing) {
-    //     existing.Amount += exp.amount;
-    //   } else {
-    //     acc.push({ date: dateStr, Amount: exp.amount });
-    //   }
-    //   return acc;
-    // }, []).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const categoryWise = Object.entries(categoryMap)
+      .map(([id, amt]) => {
+        const categoryName =
+          categories.find((cat) => cat.id === parseInt(id))?.name || "Unknown";
+        return {
+          categoryId: id,
+          category: categoryName,
+          amount: amt,
+          percentage: totalAmount > 0 ? (amt / totalAmount) * 100 : 0,
+        };
+      })
+      .filter((entry) => entry.percentage > 0);
 
     const today = new Date();
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(today);
       d.setDate(d.getDate() - (6 - i));
-      return d.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+      return d.toLocaleDateString("en-CA");
     });
 
     const dateMap = {};
-    expenses.forEach(exp => {
-      const dateStr = new Date(exp.date).toISOString().split('T')[0];
+    expenses.forEach((exp) => {
+      const dateStr = new Date(exp.date).toLocaleDateString("en-CA"); // 'YYYY-MM-DD' format
       dateMap[dateStr] = (dateMap[dateStr] || 0) + exp.amount;
     });
 
-    const last7Data = last7Days.map(date => ({
+    const last7Data = last7Days.map((date) => ({
       date,
       Amount: dateMap[date] || 0,
     }));
 
-    const maxAmount = Math.max(...last7Data.map(d => d.Amount));
-    const highlightedData = last7Data.map(d => ({
+    // Add an extra field for tooltips with formatting already applied
+    const maxAmount = Math.max(...last7Data.map((d) => d.Amount));
+    const highlightedData = last7Data.map((d) => ({
       ...d,
+      label: d.Amount === maxAmount ? `₹${d.Amount} (Highest)` : `₹${d.Amount}`,
       isMax: d.Amount === maxAmount,
     }));
+
     setDateData(highlightedData);
     setCategoryData(categoryWise);
   }, [expenses, categories]);
 
-  const COLORS = generateShades('#130037', categoryData.length);
+  const COLORS = generateColors(categoryData.length);
 
   const overLimitCategories = categoryData
-    .filter(entry => overBudget?.categories?.includes(parseInt(entry.categoryId)))
-    .map(entry => entry.category);
+    .filter((entry) =>
+      overBudget?.categories?.includes(parseInt(entry.categoryId))
+    )
+    .map((entry) => entry.category);
 
-  const transformedData = categoryData.map(entry => {
+  const transformedData = categoryData.map((entry) => {
     const categoryId = parseInt(entry.categoryId);
-    const budgetEntry = categoryBudgets?.find(b => b.categoryId === categoryId);
+    const budgetEntry = categoryBudgets?.find(
+      (b) => b.categoryId === categoryId
+    );
 
     if (!budgetEntry) {
-      // No budget set for this category
       return {
         ...entry,
         withinBudget: entry.amount,
         overBudget: 0,
-        hasBudget: false
+        hasBudget: false,
       };
     }
 
@@ -107,145 +124,127 @@ const SpendingCharts = ({ expenses, totalBudget, categoryBudgets, overBudget }) 
       ...entry,
       withinBudget: entry.amount > budget ? budget : entry.amount,
       overBudget: entry.amount > budget ? entry.amount - budget : 0,
-      hasBudget: true
+      hasBudget: true,
     };
   });
 
   return (
-    <Box sx={{ textAlign: 'left', border: '1px solid #ccc', p: 4 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>Monthly Spendings</Typography>
+    <Box sx={{ textAlign: "left", border: "1px solid #ccc", p: 4 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        Monthly Spendings
+      </Typography>
       {expenses.length === 0 ? (
         <Typography variant="h5" color="textSecondary" sx={{ py: 5 }}>
           No expenses found. Start by adding some to view your charts!
         </Typography>
       ) : (
         <>
-          <Box sx={{ mb: 2 }}>
-            {showTotalAlert && overBudget?.total && (
-              <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setShowTotalAlert(false)}>
-                You have exceeded your <strong>total monthly budget</strong> of ₹{totalBudget}
-              </Alert>
-            )}
+          {showTotalAlert && overBudget?.total && (
+            <Alert
+              severity="warning"
+              sx={{ mb: 2 }}
+              onClose={() => setShowTotalAlert(false)}
+            >
+              You have exceeded your <strong>total monthly budget</strong> of ₹
+              {totalBudget}
+            </Alert>
+          )}
 
-            {showCategoryAlert && overLimitCategories.length > 0 && (
-              <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setShowCategoryAlert(false)}>
-                Budget limit exceeded for: <strong>{overLimitCategories.join(', ')}</strong>
-              </Alert>
-            )}
-            <Box mt={4} sx={{
-              border: '1px solid #ddd',
-              borderRadius: 2,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s',
-              '&:hover': {
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-              },
-            }}>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={transformedData}>
-                  <CartesianGrid strokeDasharray="4 4" />
-                  <XAxis dataKey="category" interval={0} angle={-30} textAnchor="end" height={80} />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend
-                    content={() => (
-                      <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '10px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <div style={{ width: 14, height: 14, backgroundColor: '#6a1b9a' /* or COLORS[0] */ }}></div>
-                          <span>Within Budget</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <div style={{ width: 14, height: 14, backgroundColor: '#d32f2f' }}></div>
-                          <span>Over Budget</span>
-                        </div>
-                      </div>
-                    )}
-                  />
+          {showCategoryAlert && overLimitCategories.length > 0 && (
+            <Alert
+              severity="warning"
+              sx={{ mb: 2 }}
+              onClose={() => setShowCategoryAlert(false)}
+            >
+              Budget limit exceeded for:{" "}
+              <strong>{overLimitCategories.join(", ")}</strong>
+            </Alert>
+          )}
 
-                  <Bar dataKey="withinBudget" name="Within Budget" stackId="a">
-                    {transformedData.map((entry, index) => (
-                      <Cell
-                        key={`cell-wb-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Bar>
-
-                  <Bar dataKey="overBudget" name="Over Budget" stackId="a">
-                    {transformedData.map((entry, index) => (
-                      <Cell
-                        key={`cell-ob-${index}`}
-                        fill={entry.hasBudget ? '#d32f2f' : COLORS[index % COLORS.length]} // fallback to same color if no budget
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </Box>
-
-            {/* <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  dataKey="percentage"
-                  nameKey="category"
-                  outerRadius={100}
-                  fill="#130037"
-                  label={({ percentage }) => `${percentage.toFixed(2)}%`}
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
-              </PieChart>
-            </ResponsiveContainer> */}
+          {/* Bar Chart */}
+          <Box>
+            <BarChart
+              height={400}
+              dataset={transformedData}
+              xAxis={[
+                {
+                  scaleType: "band",
+                  dataKey: "category",
+                  categoryGapRatio: 0.4,
+                },
+              ]}
+              series={[
+                {
+                  dataKey: "withinBudget",
+                  label: "Within Budget",
+                  stack: "a",
+                  color: "#261052", // Use one consistent color
+                },
+                {
+                  dataKey: "overBudget",
+                  label: "Over Budget",
+                  stack: "a",
+                  color: "#d32f2f", // Red for over budget
+                },
+              ]}
+            />
           </Box>
 
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h5" gutterBottom>Last 7 Days Spendings</Typography>
-            <Box mt={2} sx={{
-              border: '1px solid #ddd',
-              borderRadius: 2,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s',
-              '&:hover': {
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-              },
-            }}
-            >
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={dateData}>
-                  <CartesianGrid strokeDasharray="4 4" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip
-                    formatter={(value, name, props) =>
-                      props.payload.isMax
-                        ? [`₹${value} (Highest)`, name]
-                        : [`₹${value}`, name]
-                    }
-                  />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="Amount"
-                    stroke="#6a1b9a"
-                    strokeWidth={2}
-                    dot={({ cx, cy, payload, index }) => (
-                      <circle
-                        key={`dot-${index}`}
-                        cx={cx}
-                        cy={cy}
-                        r={5}
-                        fill={payload.isMax ? '#d32f2f' : '#6a1b9a'}
-                        stroke="#fff"
-                        strokeWidth={1}
-                      />
-                    )}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+          {/* Pie Chart */}
+          <Box mt={4}>
+            <PieChart
+              height={250}
+              width={250} // Adjust width to match the height for a circular pie chart
+              series={[
+                {
+                  arcLabel: (item) => `${item.value.toFixed(0)}%`, // Format the labels as percentages
+                  arcLabelMinAngle: 20, // Minimum angle before showing labels
+                  data: categoryData.map((entry, index) => ({
+                    id: entry.category,
+                    value: entry.percentage,
+                    label: entry.category,
+                    color: COLORS[index % COLORS.length], // Assign a color from the COLORS array
+                  })),
+                  highlightScope: { fade: "global", highlight: "item" }, // Highlight functionality for slices
+                  faded: {
+                    innerRadius: 30,
+                    additionalRadius: -30,
+                    color: "gray",
+                  }, // Style for faded slices
+                },
+              ]}
+              slotProps={{
+                legend: { hidden: false }, // Display legend
+              }}
+            />
+          </Box>
+
+          {/* Line Chart */}
+          <Box mt={6}>
+            <Typography variant="h5" sx={{ }}>
+              Last & Days Spendings
+            </Typography>
+            <Box sx={{mt: 2}}>
+              <LineChart
+                height={300}
+                xAxis={[{ scaleType: "point", dataKey: "date" }]}
+                dataset={dateData}
+                series={[
+                  {
+                    dataKey: "Amount",
+                    label: "Amount",
+                    color: "#6a1b9a",
+                    showMark: true,
+                  },
+                ]}
+                tooltip={{
+                  trigger: "item",
+                  formatter: ({ data }) =>
+                    `Date: ${data.date}<br/>Amount: ₹${data.Amount}${
+                      data.isMax ? " (Highest)" : ""
+                    }`,
+                }}
+              />
             </Box>
           </Box>
         </>
