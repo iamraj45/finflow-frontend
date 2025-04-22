@@ -64,9 +64,7 @@ export default function Home() {
 
       const response = await axios.get(url);
       setExpenses(response.data || []);
-      if (response.data[0].totalPage > 1) {
         setTotalPages(response.data[0].totalPage || 1);
-      }
     } catch (error) {
       console.error("Failed to fetch filtered expenses:", error);
     }
