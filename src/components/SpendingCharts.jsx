@@ -129,7 +129,7 @@ const SpendingCharts = ({
   });
 
   return (
-    <Box sx={{ textAlign: "left", border: "1px solid #ccc", p: 4 }}>
+    <Box sx={{ textAlign: "left", p: 4 }}>
       <Typography variant="h5" sx={{ mb: 2 }}>
         Monthly Spendings
       </Typography>
