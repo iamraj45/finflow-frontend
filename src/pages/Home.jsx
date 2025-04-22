@@ -63,7 +63,7 @@ export default function Home() {
 
       const response = await axios.get(url);
       setExpenses(response.data || []);
-      if (response.data[0] > 1) {
+      if (response.data[0].totalPage > 1) {
         setTotalPages(response.data[0].totalPage || 1);
       }
     } catch (error) {
@@ -101,11 +101,16 @@ export default function Home() {
 
   useEffect(() => {
     if (userId) {
-      fetchChartExpenses(); // only once
+      fetchChartExpenses(); // load once
       fetchBudgets();
-      fetchExpenses(selectedDateRange, selectedCategory?.id, pageNo); // initial fetch
     }
   }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchExpenses(selectedDateRange, selectedCategory?.id, pageNo);
+    }
+  }, [userId, selectedDateRange, selectedCategory, pageNo]);
 
   useEffect(() => {
     if (!chartExpenses.length || totalBudget === null) return;
