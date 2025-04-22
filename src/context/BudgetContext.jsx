@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-import axios from '../utils/axios';
+import React, { createContext, useState, useEffect } from "react";
+import axios from "../utils/axios";
 
 export const BudgetContext = createContext();
 
@@ -14,70 +14,79 @@ export const BudgetProvider = ({ children }) => {
 
   const fetchBudgets = async () => {
     try {
-      const totalRes = await axios.get(`${apiUrl}/api/getUserData?userId=${userId}`);
-      const categoryRes = await axios.get(`${apiUrl}/api/budgets/getCategoryBudget?userId=${userId}`);
-  
+      const totalRes = await axios.get(
+        `${apiUrl}/api/getUserData?userId=${userId}`
+      );
+      const categoryRes = await axios.get(
+        `${apiUrl}/api/budgets/getCategoryBudget?userId=${userId}`
+      );
+
       setUserData(totalRes.data); // save complete user info
       setTotalBudget(totalRes.data?.totalBudget || null);
       setCategoryBudgets(categoryRes.data || []);
     } catch (err) {
-      console.error('Error fetching budgets:', err);
+      console.error("Error fetching budgets:", err);
     }
   };
 
   const saveTotalBudget = async (budget) => {
     if (!userData) return;
-  
+
     const updatedUser = {
       ...userData,
       totalBudget: parseFloat(budget),
     };
-  
+
     try {
       await axios.post(`${apiUrl}/api/updateUserData`, updatedUser);
       setTotalBudget(updatedUser.totalBudget);
       setUserData(updatedUser); // update local context
     } catch (err) {
-      console.error('Failed to save total budget:', err);
+      console.error("Failed to save total budget:", err);
     }
-  };  
+  };
 
   const saveCategoryBudgets = async (budgets) => {
     try {
-      await axios.post(`${apiUrl}/api/budgets/setCategoryBudget?userId=${userId}`, budgets);
+      await axios.post(
+        `${apiUrl}/api/budgets/setCategoryBudget?userId=${userId}`,
+        budgets
+      );
       await fetchBudgets();
     } catch (err) {
-      console.error('Failed to save category budgets:', err);
+      console.error("Failed to save category budgets:", err);
     }
-  };  
+  };
 
   const deleteCategoryBudget = async (categoryId) => {
     try {
       await axios.delete(`${apiUrl}/api/budgets/deleteCategoryBudget`, {
         params: {
           userId,
-          categoryId
-        }
+          categoryId,
+        },
       });
       await fetchBudgets(); // Refresh budget data after deletion
     } catch (err) {
-      console.error('Failed to delete category budget:', err);
+      console.error("Failed to delete category budget:", err);
     }
-  };  
+  };
 
   useEffect(() => {
     fetchBudgets();
   }, [userId]);
 
   return (
-    <BudgetContext.Provider value={{
-      totalBudget,
-      categoryBudgets,
-      fetchBudgets,
-      saveTotalBudget,
-      saveCategoryBudgets,
-      deleteCategoryBudget,
-    }}>
+    <BudgetContext.Provider
+      value={{
+        totalBudget,
+        categoryBudgets,
+        fetchBudgets,
+        saveTotalBudget,
+        saveCategoryBudgets,
+        deleteCategoryBudget,
+      }}
+    >
       {children}
     </BudgetContext.Provider>
   );

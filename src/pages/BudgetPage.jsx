@@ -14,7 +14,6 @@ export default function BudgetPage() {
   const { totalBudget, categoryBudgets, saveTotalBudget, saveCategoryBudgets, deleteCategoryBudget } = useContext(BudgetContext);
   const { categories } = useContext(CategoryContext);
   const { enqueueSnackbar } = useSnackbar();
-
   const [localTotalBudget, setLocalTotalBudget] = useState('');
   const [localCategoryBudgets, setLocalCategoryBudgets] = useState([]);
   const [newBudgets, setNewBudgets] = useState([{ categoryId: '', budget: '' }]);
@@ -96,29 +95,43 @@ export default function BudgetPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: "flex-start",
+          justifyContent: "center",
         }}
       >
         {/* Left Section */}
-        <Box sx={{ flex: 1, minWidth: '400px', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: "400px",
+            border: "1px solid #ccc",
+            p: 4,
+            borderRadius: 0,
+          }}
+        >
           <Paper elevation={2}>
-            <Typography variant="h6" mb={2} gutterBottom>Total Monthly Budget</Typography>
+            <Typography variant="h6" mb={2} gutterBottom>
+              Total Monthly Budget
+            </Typography>
             <TextField
               type="number"
               value={localTotalBudget}
               onChange={(e) => setLocalTotalBudget(Math.max(0, e.target.value))}
               inputProps={{ min: 0 }}
               error={localTotalBudget < 0}
-              helperText={localTotalBudget < 0 ? 'Budget must be non-negative' : ''}
+              helperText={
+                localTotalBudget < 0 ? "Budget must be non-negative" : ""
+              }
             />
 
-            <Typography variant="h6" mt={4} gutterBottom>Budget Settings (Per Category)</Typography>
+            <Typography variant="h6" mt={4} gutterBottom>
+              Budget Settings (Per Category)
+            </Typography>
             {localCategoryBudgets.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 You have not added budget for any categories yet.
@@ -132,13 +145,20 @@ export default function BudgetPage() {
                         label={cat.categoryName}
                         type="number"
                         value={cat.budget}
-                        onChange={(e) => handleCategoryBudgetChange(index, e.target.value)}
+                        onChange={(e) =>
+                          handleCategoryBudgetChange(index, e.target.value)
+                        }
                         fullWidth
                         inputProps={{ min: 0 }}
                         error={cat.budget < 0}
-                        helperText={cat.budget < 0 ? 'Budget must be non-negative' : ''}
+                        helperText={
+                          cat.budget < 0 ? "Budget must be non-negative" : ""
+                        }
                       />
-                      <IconButton color="error" onClick={() => handleDeleteCategoryBudget(index)}>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDeleteCategoryBudget(index)}
+                      >
                         <Delete />
                       </IconButton>
                     </Stack>
@@ -150,7 +170,11 @@ export default function BudgetPage() {
                   variant="contained"
                   onClick={handleSaveAllBudgets}
                   disabled={loading.total || loading.categories}
-                  startIcon={(loading.total || loading.categories) && <CircularProgress size={20} />}
+                  startIcon={
+                    (loading.total || loading.categories) && (
+                      <CircularProgress size={20} />
+                    )
+                  }
                 >
                   Save Changes
                 </Button>
@@ -160,9 +184,19 @@ export default function BudgetPage() {
         </Box>
 
         {/* Right Section - Add New Category Budgets */}
-        <Box sx={{ flex: 1, minWidth: '400px', border: '1px solid #ccc', p: 4, borderRadius: 0 }}>
+        <Box
+          sx={{
+            flex: 1,
+            minWidth: "400px",
+            border: "1px solid #ccc",
+            p: 4,
+            borderRadius: 0,
+          }}
+        >
           <Paper elevation={2}>
-            <Typography variant="h6" mb={2} gutterBottom>Add Category Budgets</Typography>
+            <Typography variant="h6" mb={2} gutterBottom>
+              Add Category Budgets
+            </Typography>
             <Stack spacing={2}>
               {newBudgets.map((entry, index) => (
                 <Stack direction="row" spacing={2} key={index}>
@@ -171,14 +205,27 @@ export default function BudgetPage() {
                     <Select
                       value={entry.categoryId}
                       label="Select Category"
-                      onChange={(e) => handleNewBudgetChange(index, 'categoryId', e.target.value)}
+                      onChange={(e) =>
+                        handleNewBudgetChange(
+                          index,
+                          "categoryId",
+                          e.target.value
+                        )
+                      }
                     >
                       {categories
-                        .filter(cat =>
-                          !localCategoryBudgets.some(existing => existing.categoryId === cat.id) &&
-                          !newBudgets.some((nb, i) => nb.categoryId === cat.id.toString() && i !== index)
+                        .filter(
+                          (cat) =>
+                            !localCategoryBudgets.some(
+                              (existing) => existing.categoryId === cat.id
+                            ) &&
+                            !newBudgets.some(
+                              (nb, i) =>
+                                nb.categoryId === cat.id.toString() &&
+                                i !== index
+                            )
                         )
-                        .map(cat => (
+                        .map((cat) => (
                           <MenuItem key={cat.id} value={cat.id.toString()}>
                             {cat.name}
                           </MenuItem>
@@ -189,12 +236,14 @@ export default function BudgetPage() {
                     label="Budget"
                     type="number"
                     value={entry.budget}
-                    onChange={(e) => handleNewBudgetChange(index, 'budget', e.target.value)}
+                    onChange={(e) =>
+                      handleNewBudgetChange(index, "budget", e.target.value)
+                    }
                     fullWidth
                   />
                 </Stack>
               ))}
-              <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+              <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
                 <Button
                   onClick={addNewBudgetField}
                   variant="outlined"
