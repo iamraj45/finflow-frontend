@@ -1,9 +1,5 @@
 import { Alert, Box, Typography } from "@mui/material";
-import {
-  BarChart,
-  LineChart,
-  PieChart
-} from "@mui/x-charts";
+import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import React, { useContext, useEffect, useState } from "react";
 import { CategoryContext } from "../context/CategoryContext";
 
@@ -139,30 +135,22 @@ const SpendingCharts = ({
         </Typography>
       ) : (
         <>
-          {/* {showTotalAlert && overBudget?.total && (
-            <Alert
-              severity="warning"
-              sx={{ mb: 2 }}
-              onClose={() => setShowTotalAlert(false)}
-            >
-              You have exceeded your <strong>total monthly budget</strong> of ₹
-              {totalBudget}
-            </Alert>
-          )}
-
-          {showCategoryAlert && overLimitCategories.length > 0 && (
-            <Alert
-              severity="warning"
-              sx={{ mb: 2 }}
-              onClose={() => setShowCategoryAlert(false)}
-            >
-              Budget limit exceeded for:{" "}
-              <strong>{overLimitCategories.join(", ")}</strong>
-            </Alert>
-          )} */}
-
           {/* Bar Chart */}
-          <Box>
+          <Box
+            mt={4}
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: 2,
+              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+              paddingY: 1,
+              paddingX: 2,
+              backgroundColor: "#fff",
+              transition: "all 0.2s",
+              "&:hover": {
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              },
+            }}
+          >
             <BarChart
               height={350}
               dataset={transformedData}
@@ -191,7 +179,21 @@ const SpendingCharts = ({
           </Box>
 
           {/* Pie Chart */}
-          <Box mt={4}>
+          <Box
+            mt={4}
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: 2,
+              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+              paddingY: 1,
+              paddingX: 2,
+              backgroundColor: "#fff",
+              transition: "all 0.2s",
+              "&:hover": {
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              },
+            }}
+          >
             <PieChart
               height={250}
               width={250} // Adjust width to match the height for a circular pie chart
@@ -220,11 +222,25 @@ const SpendingCharts = ({
           </Box>
 
           {/* Line Chart */}
-          <Box mt={6}>
-            <Typography variant="h5" sx={{ }}>
+          <Box mt={4}>
+            <Typography variant="h5" sx={{}}>
               Last & Days Spendings
             </Typography>
-            <Box sx={{mt: 2}}>
+            <Box
+              sx={{
+                mt: 2,
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                paddingY: 1,
+                paddingX: 2,
+                backgroundColor: "#fff",
+                transition: "all 0.2s",
+                "&:hover": {
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                },
+              }}
+            >
               <LineChart
                 height={300}
                 xAxis={[{ scaleType: "point", dataKey: "date" }]}

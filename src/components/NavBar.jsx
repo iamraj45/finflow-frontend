@@ -30,7 +30,11 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
   const [categoryData, setCategoryData] = useState([]);
   const [overLimitCategories, setOverLimitCategories] = useState([]);
   const { categories } = useContext(CategoryContext);
-  const [hasSeenNotifications, setHasSeenNotifications] = useState(false);
+
+  const [hasSeenNotifications, setHasSeenNotifications] = useState(() => {
+    const stored = localStorage.getItem("hasSeenNotifications");
+    return stored === null ? false : JSON.parse(stored);
+  });
 
   const [showTotalAlert, setShowTotalAlert] = useState(() => {
     const stored = localStorage.getItem("showTotalAlert");
@@ -42,7 +46,6 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
     return stored === null ? true : JSON.parse(stored);
   });
 
-
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName");
 
@@ -53,12 +56,14 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
     setNotificationAnchorEl(event.currentTarget);
     setHasUnreadNotifications(false);
     setHasSeenNotifications(true); // 👈 User has seen the alert(s)
+    localStorage.setItem("hasSeenNotifications", "true");
   };
 
   // Handle notification close
   const handleNotificationClose = () => {
     setNotificationAnchorEl(null);
     setHasUnreadNotifications(false);
+    localStorage.setItem("hasSeenNotifications", "true");
   };
 
   // Effect for processing expense data and checking budget limits
@@ -144,7 +149,11 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("showTotalAlert");
+    localStorage.removeItem("showCategoryAlert");
+    localStorage.removeItem("hasSeenNotifications");
     localStorage.removeItem("token");
+    localStorage.removeItem("userName");
     setDrawerOpen(false);
     navigate("/sign-in");
   };
