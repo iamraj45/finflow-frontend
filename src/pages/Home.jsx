@@ -1,5 +1,5 @@
-import { Box, useMediaQuery } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, useMediaQuery, CircularProgress } from "@mui/material";
+import { useState, useEffect, useContext } from "react";
 import MyExpenses from "../components/MyExpenses.jsx";
 import SpendingCharts from "../components/SpendingCharts.jsx";
 import Navbar from "../components/NavBar.jsx";
@@ -12,6 +12,7 @@ const defaultChartRange = {
 
 export default function Home() {
   const isMobile = useMediaQuery("(max-width:768px)");
+  const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState([]);
   const [chartExpenses, setChartExpenses] = useState([]);
   const [totalBudget, setTotalBudget] = useState(null);
@@ -100,10 +101,18 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (userId) {
-      fetchChartExpenses(); // load once
-      fetchBudgets();
-    }
+    const fetchInitialData = async () => {
+      try {
+        if (!userId) return;
+        await Promise.all([fetchChartExpenses(), fetchBudgets()]);
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
   }, [userId]);
 
   useEffect(() => {
@@ -137,6 +146,20 @@ export default function Home() {
     fetchChartExpenses();
   };
 
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress size={50} />
+      </Box>
+    );
+  }
   return (
     <>
       <Navbar

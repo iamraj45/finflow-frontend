@@ -109,6 +109,10 @@ body {
   color: var(--color-button-text) !important;
 }
 
+.MuiCheckbox-root{
+  color: #130037 !important;
+}
+
 /* Remove arrows from number inputs */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
