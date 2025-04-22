@@ -1,17 +1,25 @@
-import { Box, useMediaQuery } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { Box, useMediaQuery } from "@mui/material";
+import { useState, useEffect } from "react";
 import MyExpenses from "../components/MyExpenses.jsx";
 import SpendingCharts from "../components/SpendingCharts.jsx";
-import Navbar from '../components/NavBar.jsx';
-import axios from '../utils/axios';
+import Navbar from "../components/NavBar.jsx";
+import axios from "../utils/axios";
+
+const defaultChartRange = {
+  startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  endDate: new Date().setHours(23, 59, 59, 999),
+};
 
 export default function Home() {
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const isMobile = useMediaQuery("(max-width:768px)");
   const [expenses, setExpenses] = useState([]);
   const [chartExpenses, setChartExpenses] = useState([]);
   const [totalBudget, setTotalBudget] = useState(null);
   const [categoryBudgets, setCategoryBudgets] = useState([]);
-  const [overBudget, setOverBudget] = useState({ total: false, categories: [] });
+  const [overBudget, setOverBudget] = useState({
+    total: false,
+    categories: [],
+  });
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const [selectedDateRange, setSelectedDateRange] = useState({
@@ -23,13 +31,9 @@ export default function Home() {
   const pageSize = 10;
   const [totalPages, setTotalPages] = useState(1);
 
-  const defaultChartRange = {
-    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    endDate: new Date().setHours(23, 59, 59, 999),
-  };
-
   const apiUrl = import.meta.env.VITE_API_URL;
-  const userId = localStorage.getItem("userId");
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
   const handleCategoryFilterApply = (categoryId, categoryName) => {
     setSelectedCategory({ id: categoryId, name: categoryName });
@@ -59,7 +63,7 @@ export default function Home() {
 
       const response = await axios.get(url);
       setExpenses(response.data || []);
-      if(response.data[0] > 1){
+      if (response.data[0] > 1) {
         setTotalPages(response.data[0].totalPage || 1);
       }
     } catch (error) {
@@ -82,8 +86,12 @@ export default function Home() {
 
   const fetchBudgets = async () => {
     try {
-      const totalBudgetRes = await axios.get(`${apiUrl}/api/getUserData?userId=${userId}`);
-      const categoryBudgetRes = await axios.get(`${apiUrl}/api/budgets/getCategoryBudget?userId=${userId}`);
+      const totalBudgetRes = await axios.get(
+        `${apiUrl}/api/getUserData?userId=${userId}`
+      );
+      const categoryBudgetRes = await axios.get(
+        `${apiUrl}/api/budgets/getCategoryBudget?userId=${userId}`
+      );
       setTotalBudget(totalBudgetRes.data.totalBudget || null);
       setCategoryBudgets(categoryBudgetRes.data || []);
     } catch (error) {
@@ -93,16 +101,11 @@ export default function Home() {
 
   useEffect(() => {
     if (userId) {
-      fetchChartExpenses(); // load once
+      fetchChartExpenses(); // only once
       fetchBudgets();
+      fetchExpenses(selectedDateRange, selectedCategory?.id, pageNo); // initial fetch
     }
   }, [userId]);
-
-  useEffect(() => {
-    if (userId) {
-      fetchExpenses(selectedDateRange, selectedCategory?.id, pageNo);
-    }
-  }, [userId, selectedDateRange, selectedCategory, pageNo]);
 
   useEffect(() => {
     if (!chartExpenses.length || totalBudget === null) return;
@@ -113,14 +116,14 @@ export default function Home() {
       return acc;
     }, {});
 
-    const crossedCategories = categoryBudgets.filter(catBud => {
+    const crossedCategories = categoryBudgets.filter((catBud) => {
       const spent = categoryTotals[catBud.categoryId] || 0;
       return spent > catBud.budget;
     });
 
     setOverBudget({
       total: totalSpent > totalBudget,
-      categories: crossedCategories.map(cat => cat.categoryId),
+      categories: crossedCategories.map((cat) => cat.categoryId),
     });
   }, [chartExpenses, totalBudget, categoryBudgets]);
 
@@ -131,16 +134,21 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
+      <Navbar
+        expenses={chartExpenses}
+        categoryBudgets={categoryBudgets}
+        totalBudget={totalBudget}
+        overBudget={overBudget}
+      />
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "center",
+          alignItems: "flex-start",
         }}
       >
-        <Box sx={{ flex: 1, minWidth: '400px' }}>
+        <Box sx={{ flex: 1, minWidth: "400px" }}>
           <MyExpenses
             expenses={expenses}
             onExpenseAdded={handleExpenseAdded}
@@ -155,7 +163,7 @@ export default function Home() {
             totalPages={totalPages}
           />
         </Box>
-        <Box sx={{ flex: 1, minWidth: '400px' }}>
+        <Box sx={{ flex: 1, minWidth: "400px" }}>
           <SpendingCharts
             expenses={chartExpenses}
             totalBudget={totalBudget}

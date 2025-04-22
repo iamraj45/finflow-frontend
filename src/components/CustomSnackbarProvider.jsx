@@ -5,7 +5,7 @@ const CustomSnackbar = React.forwardRef(function CustomSnackbar(props, ref) {
   const { message, ...other } = props;
 
   return (
-    <div
+    <Box
       ref={ref}
       {...other}
       style={{
@@ -20,7 +20,7 @@ const CustomSnackbar = React.forwardRef(function CustomSnackbar(props, ref) {
       }}
     >
       {message}
-    </div>
+    </Box>
   );
 });
 

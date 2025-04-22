@@ -139,7 +139,7 @@ const SpendingCharts = ({
         </Typography>
       ) : (
         <>
-          {showTotalAlert && overBudget?.total && (
+          {/* {showTotalAlert && overBudget?.total && (
             <Alert
               severity="warning"
               sx={{ mb: 2 }}
@@ -159,12 +159,12 @@ const SpendingCharts = ({
               Budget limit exceeded for:{" "}
               <strong>{overLimitCategories.join(", ")}</strong>
             </Alert>
-          )}
+          )} */}
 
           {/* Bar Chart */}
           <Box>
             <BarChart
-              height={400}
+              height={350}
               dataset={transformedData}
               xAxis={[
                 {
