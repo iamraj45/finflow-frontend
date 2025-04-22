@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -9,21 +9,22 @@ import {
   TableCell,
   Paper,
   CircularProgress,
-} from '@mui/material';
-import axios from '../utils/axios';
+} from "@mui/material";
+import axios from "../utils/axios";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const userId = localStorage.getItem("userId");
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${apiUrl}/api/getUserData`);
+      const res = await axios.get(`${apiUrl}/api/getUserData?userId=${userId}`);
       setUsers(res.data);
       setLoading(false);
     } catch (err) {
-      console.error('Failed to fetch users:', err);
+      console.error("Failed to fetch users:", err);
       setLoading(false);
     }
   };
@@ -34,10 +35,6 @@ const Users = () => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
-      <Typography variant="h4" gutterBottom>
-        All Users List
-      </Typography>
-
       {loading ? (
         <CircularProgress />
       ) : (
@@ -45,19 +42,27 @@ const Users = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><strong>ID</strong></TableCell>
-                <TableCell><strong>Name</strong></TableCell>
-                <TableCell><strong>Email</strong></TableCell>
+                <TableCell>
+                  <strong>ID</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Name</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Email</strong>
+                </TableCell>
+                <TableCell>
+                  <strong>Total Budget</strong>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map(user => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                </TableRow>
-              ))}
+              <TableRow key={users.id}>
+                <TableCell>{users.id}</TableCell>
+                <TableCell>{users.name}</TableCell>
+                <TableCell>{users.email}</TableCell>
+                <TableCell>{users.totalBudget}</TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </Paper>
