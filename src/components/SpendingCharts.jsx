@@ -1,7 +1,8 @@
-import { Alert, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import React, { useContext, useEffect, useState } from "react";
 import { CategoryContext } from "../context/CategoryContext";
+import { Link } from "react-router-dom";
 
 function generateColors(count) {
   const colors = [];
@@ -36,6 +37,9 @@ const SpendingCharts = ({
   const { categories } = useContext(CategoryContext);
   const [showTotalAlert, setShowTotalAlert] = useState(true);
   const [showCategoryAlert, setShowCategoryAlert] = useState(true);
+
+  const amountSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const percentageUsed = (amountSpent / totalBudget) * 100;
 
   useEffect(() => {
     if (!expenses || expenses.length === 0) return;
@@ -126,7 +130,7 @@ const SpendingCharts = ({
 
   return (
     <Box sx={{ textAlign: "left", p: 4 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Typography variant="h5" sx={{ mb: 2.5 }}>
         Monthly Spendings
       </Typography>
       {expenses.length === 0 ? (
@@ -135,9 +139,59 @@ const SpendingCharts = ({
         </Typography>
       ) : (
         <>
+          {totalBudget > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="body2">
+                Amount spent this month: ₹{amountSpent} / ₹{totalBudget}.
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  mt: 1,
+                  mb: 2,
+                }}
+              >
+                <span
+                  style={{
+                    color: percentageUsed >= 90 ? "red" : "var(--color-secondary)", 
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {percentageUsed.toFixed(2)}%
+                </span>{" "} of your budget has been utilized.
+                <Link
+                  to="/budget"
+                  style={{ textDecoration: "none", fontWeight: "bold" }}
+                >
+                  {" "}
+                  Change budget?
+                </Link>
+              </Typography>
+
+              <Box
+                sx={{
+                  height: 17,
+                  borderRadius: 5,
+                  backgroundColor: "#e0e0e0",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: `${percentageUsed}%`,
+                    backgroundColor:
+                      amountSpent > totalBudget ? "#d32f2f" : "#261052",
+                    height: "100%",
+                    transition: "width 0.4s ease",
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
+
           {/* Bar Chart */}
           <Box
-            mt={4}
+            mt={2}
             sx={{
               border: "1px solid #ddd",
               borderRadius: 2,

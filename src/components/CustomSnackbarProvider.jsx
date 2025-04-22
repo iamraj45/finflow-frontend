@@ -1,5 +1,6 @@
 import { SnackbarProvider } from 'notistack';
 import React from 'react';
+import { Box } from '@mui/material';
 
 const CustomSnackbar = React.forwardRef(function CustomSnackbar(props, ref) {
   const { message, ...other } = props;
@@ -7,7 +8,6 @@ const CustomSnackbar = React.forwardRef(function CustomSnackbar(props, ref) {
   return (
     <Box
       ref={ref}
-      {...other}
       style={{
         textAlign: 'center',
         backgroundColor: 'var(--color-secondary)',

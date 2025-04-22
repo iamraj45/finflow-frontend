@@ -83,7 +83,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
     const categoryWise = Object.entries(categoryMap)
       .map(([id, amount]) => {
         const categoryName =
-          categories.find((cat) => cat.id === parseInt(id))?.name || "Unknown";
+          categories.find((cat) => cat.id === parseInt(id))?.name || "Unknown category";
 
         // Check if this category has a budget
         const budgetEntry = categoryBudgets?.find(

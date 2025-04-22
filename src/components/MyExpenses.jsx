@@ -125,7 +125,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
     const getCategoryName = (id) => {
         if (!Array.isArray(categories)) return 'Loading...';
         const category = categories.find(cat => cat.id === id);
-        return category ? category.name : 'Unknown';
+        return category ? category.name : 'Unknown category';
     };
 
     const handleExpenseAdded = () => {
