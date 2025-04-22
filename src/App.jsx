@@ -7,21 +7,8 @@ import PrivateRoute from "./components/common/PrivateRoute";
 import { CategoryProvider } from "./context/CategoryContext";
 import BudgetPage from "./pages/BudgetPage";
 import { BudgetProvider } from "./context/BudgetContext";
-import { useEffect } from "react";
 
 function App() {
-  useEffect(() => {
-    const handleApiError = (event) => {
-      toast.error(event.detail.message); // or set global error state, modal, etc.
-    };
-
-    window.addEventListener("apiError", handleApiError);
-
-    return () => {
-      window.removeEventListener("apiError", handleApiError);
-    };
-  }, []);
-
   return (
     <Router>
       <Routes>
