@@ -415,7 +415,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                                                 setEditValues({
                                                     amount: expense.amount,
                                                     description: expense.description,
-                                                    date: new Date(expense.date).toISOString().split('T')[0],
+                                                    date: new Date(expense.date).toLocaleDateString('en-CA'), // returns 'YYYY-MM-DD'
                                                     categoryId: expense.categoryId
                                                 });
                                             }}
