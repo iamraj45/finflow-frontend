@@ -135,7 +135,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
     };
 
     return (
-      <Box sx={{ textAlign: "center", p: 4 }}>
+      <Box sx={{ textAlign: "center", p: 0, width: '100%' }}>
         {/* Title */}
         <Typography variant="h5" sx={{ textAlign: "left", mb: 3 }}>
           My Expenses
@@ -377,7 +377,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
                     alignItems: "center",
                     ml: 2,
                     mr: 2,
-                    minWidth: 140,
+                    minWidth: 100,
                     justifyContent: "flex-end",
                   }}
                 >
@@ -474,7 +474,7 @@ const MyExpenses = ({ expenses, onExpenseAdded, selectedDateRange, setSelectedDa
               left: "50%",
               transform: "translate(-50%, -50%)",
               width: "90%",
-              maxWidth: 400,
+              maxWidth: '80%',
               bgcolor: "background.paper",
               boxShadow: 24,
               p: 3,

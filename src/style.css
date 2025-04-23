@@ -113,6 +113,12 @@ body {
   color: #130037 !important;
 }
 
+.MuiChip-avatar{
+  margin-left: -5px !important;
+  height: 30px !important;
+  width: 30px !important;
+}
+
 /* Remove arrows from number inputs */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {

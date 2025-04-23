@@ -129,7 +129,7 @@ const SpendingCharts = ({
   });
 
   return (
-    <Box sx={{ textAlign: "left", p: 4 }}>
+    <Box sx={{ textAlign: "left", p: 0, width: '100%' }}>
       <Typography variant="h5" sx={{ mb: 2.5 }}>
         Monthly Spendings
       </Typography>
@@ -197,7 +197,7 @@ const SpendingCharts = ({
               borderRadius: 2,
               boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
               paddingY: 1,
-              paddingX: 2,
+              // paddingX: 2,
               backgroundColor: "#fff",
               transition: "all 0.2s",
               "&:hover": {
@@ -240,7 +240,7 @@ const SpendingCharts = ({
               borderRadius: 2,
               boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
               paddingY: 1,
-              paddingX: 2,
+              // paddingX: 2,
               backgroundColor: "#fff",
               transition: "all 0.2s",
               "&:hover": {
@@ -278,7 +278,7 @@ const SpendingCharts = ({
           {/* Line Chart */}
           <Box mt={4}>
             <Typography variant="h5" sx={{}}>
-              Last & Days Spendings
+              Last 7 Days Spendings
             </Typography>
             <Box
               sx={{
@@ -287,7 +287,7 @@ const SpendingCharts = ({
                 borderRadius: 2,
                 boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
                 paddingY: 1,
-                paddingX: 2,
+                // paddingX: 2,
                 backgroundColor: "#fff",
                 transition: "all 0.2s",
                 "&:hover": {

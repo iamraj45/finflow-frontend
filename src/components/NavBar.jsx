@@ -13,6 +13,9 @@ import {
   Badge,
   Popover,
   Alert,
+  Stack,
+  Chip,
+  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -159,7 +162,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
   };
 
   const drawerList = (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box sx={{ width: '100%' }} role="presentation">
       <Box
         sx={{
           backgroundColor: "#130037",
@@ -171,12 +174,22 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
           gap: 1,
         }}
       >
-        <Typography variant="body3" sx={{ fontWeight: "bold", color: "white" }}>
-          Hi, {userName}
-        </Typography>
+        <Box display="flex">
+          <Chip
+            avatar={<Avatar alt="username" src="" />}
+            label={userName}
+            variant="outlined"
+            sx={{
+              fontSize: 17,
+              border: "none",
+              color: "var(--color-primary)",
+              gap: 2,
+              px: 0, // horizontal padding
+              py: 0, // vertical padding
+            }}
+          />
+        </Box>
       </Box>
-
-      <Divider />
 
       {/* Drawer Menu Items */}
       <List>
