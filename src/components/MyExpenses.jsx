@@ -75,6 +75,7 @@ const MyExpenses = ({
     "& .MuiInputBase-root": {
       borderRadius: 2,
       backgroundColor: "#fff",
+      width: "100%"
     },
     "& .MuiOutlinedInput-notchedOutline": {
       borderColor: "#ccc",
@@ -322,7 +323,7 @@ const MyExpenses = ({
                 border: "1px solid #ddd",
                 borderRadius: 2,
                 boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-                paddingY: 1.5,
+                paddingY: 1,
                 paddingX: 2,
                 backgroundColor: "#fff",
                 transition: "box-shadow 0.2s",
@@ -354,65 +355,140 @@ const MyExpenses = ({
                   width: "100%",
                 }}
               >
-                {/* Left: Amount + Description */}
-                <Box sx={{width: "50%"}}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                    {getCategoryName(expense.categoryId)}: ₹{expense.amount}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {expense.description}
-                  </Typography>
-                </Box>
+                {editingExpenseId === expense.id ? (
+                  <Box display="flex" flexDirection="column" gap={1} my={2}>
+                    <TextField
+                      type="number"
+                      value={editValues.amount}
+                      onChange={(e) =>
+                        handleEditChange("amount", e.target.value)
+                      }
+                      label="Amount"
+                      size="medium"
+                      sx={inputSx}
+                    />
+                    <TextField
+                      value={editValues.description}
+                      onChange={(e) =>
+                        handleEditChange("description", e.target.value)
+                      }
+                      label="Description"
+                      size="medium"
+                      sx={inputSx}
+                    />
+                    <TextField
+                      type="date"
+                      value={editValues.date}
+                      onChange={(e) => handleEditChange("date", e.target.value)}
+                      label="Date"
+                      size="medium"
+                      sx={inputSx}
+                      inputProps={{
+                        max: new Date().toISOString().split("T")[0],
+                        onKeyDown: (e) => e.preventDefault(),
+                      }}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControl fullWidth size="medium" sx={inputSx}>
+                      <InputLabel id="category-label">Category</InputLabel>
+                      <Select
+                        labelId="category-label"
+                        value={editValues.categoryId}
+                        label="Category"
+                        onChange={(e) =>
+                          handleEditChange("categoryId", e.target.value)
+                        }
+                      >
+                        {categories.map((cat) => (
+                          <MenuItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                ) : (
+                  <Box sx={{ width: "50%" }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {getCategoryName(expense.categoryId)}: ₹{expense.amount}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {expense.description}
+                    </Typography>
+                  </Box>
+                )}
 
-                {/* Right: Date (slides) */}
-                <Typography
-                  className="date-text"
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{
-                    whiteSpace: "nowrap",
-                    transition: "transform 0.3s ease",
-                    position: "relative",
-                    zIndex: 1,
-                  }}
-                >
-                  {new Date(expense.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </Typography>
+                {editingExpenseId !== expense.id && (
+                  <Typography
+                    className="date-text"
+                    variant="caption"
+                    color="textSecondary"
+                    sx={{
+                      whiteSpace: "nowrap",
+                      transition: "transform 0.3s ease",
+                      position: "relative",
+                      zIndex: 1,
+                    }}
+                  >
+                    {new Date(expense.date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </Typography>
+                )}
               </Box>
-
-              {/* Absolute Edit Icon (slides in) */}
-              <Tooltip title="Edit Expense">
-                <IconButton
-                  className="edit-icon"
-                  size="small"
-                  sx={{
-                    ...commonIconButtonStyles,
-                    position: "absolute",
-                    top: "25%",
-                    right: 16,
-                    transform: "translateX(20px)",
-                    opacity: 0,
-                    transition: "opacity 0.3s, transform 0.3s",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                    zIndex: 2,
-                  }}
-                  onClick={() => {
-                    setEditingExpenseId(expense.id);
-                    setEditValues({
-                      amount: expense.amount,
-                      description: expense.description,
-                      date: new Date(expense.date).toLocaleDateString("en-CA"),
-                      categoryId: expense.categoryId,
-                    });
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
+              {editingExpenseId === expense.id ? (
+                <>
+                  <Tooltip title="Save">
+                    <IconButton
+                      size="small"
+                      sx={commonIconButtonStyles}
+                      onClick={handleSave}
+                    >
+                      <SaveIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Cancel">
+                    <IconButton
+                      size="small"
+                      sx={{ ...commonIconButtonStyles, ml: 2 }}
+                      onClick={() => setEditingExpenseId(null)}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+                  </Tooltip>
+                </>
+              ) : (
+                <Tooltip title="Edit Expense">
+                  <IconButton
+                    className="edit-icon"
+                    size="small"
+                    sx={{
+                      ...commonIconButtonStyles,
+                      position: "absolute",
+                      right: 16,
+                      transform: "translateX(20px)",
+                      opacity: 0,
+                      transition: "opacity 0.3s, transform 0.3s",
+                      zIndex: 2,
+                    }}
+                    onClick={() => {
+                      setEditingExpenseId(expense.id);
+                      setEditValues({
+                        amount: expense.amount,
+                        description: expense.description,
+                        date: new Date(expense.date).toLocaleDateString(
+                          "en-CA"
+                        ),
+                        categoryId: expense.categoryId,
+                      });
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </ListItem>
           ))}
         </List>
