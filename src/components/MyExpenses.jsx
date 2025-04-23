@@ -75,7 +75,7 @@ const MyExpenses = ({
     "& .MuiInputBase-root": {
       borderRadius: 2,
       backgroundColor: "#fff",
-      width: "100%"
+      width: "100%",
     },
     "& .MuiOutlinedInput-notchedOutline": {
       borderColor: "#ccc",
@@ -356,57 +356,85 @@ const MyExpenses = ({
                 }}
               >
                 {editingExpenseId === expense.id ? (
-                  <Box display="flex" flexDirection="column" gap={1} my={2}>
-                    <TextField
-                      type="number"
-                      value={editValues.amount}
-                      onChange={(e) =>
-                        handleEditChange("amount", e.target.value)
-                      }
-                      label="Amount"
-                      size="medium"
-                      sx={inputSx}
-                    />
-                    <TextField
-                      value={editValues.description}
-                      onChange={(e) =>
-                        handleEditChange("description", e.target.value)
-                      }
-                      label="Description"
-                      size="medium"
-                      sx={inputSx}
-                    />
-                    <TextField
-                      type="date"
-                      value={editValues.date}
-                      onChange={(e) => handleEditChange("date", e.target.value)}
-                      label="Date"
-                      size="medium"
-                      sx={inputSx}
-                      inputProps={{
-                        max: new Date().toISOString().split("T")[0],
-                        onKeyDown: (e) => e.preventDefault(),
-                      }}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                    <FormControl fullWidth size="medium" sx={inputSx}>
-                      <InputLabel id="category-label">Category</InputLabel>
-                      <Select
-                        labelId="category-label"
-                        value={editValues.categoryId}
-                        label="Category"
+                  <>
+                    <Box display="flex" flexDirection="column" gap={1} my={2}>
+                      <TextField
+                        type="number"
+                        value={editValues.amount}
                         onChange={(e) =>
-                          handleEditChange("categoryId", e.target.value)
+                          handleEditChange("amount", e.target.value)
                         }
-                      >
-                        {categories.map((cat) => (
-                          <MenuItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
+                        label="Amount"
+                        size="medium"
+                        sx={inputSx}
+                      />
+                      <TextField
+                        value={editValues.description}
+                        onChange={(e) =>
+                          handleEditChange("description", e.target.value)
+                        }
+                        label="Description"
+                        size="medium"
+                        sx={inputSx}
+                      />
+                      <TextField
+                        type="date"
+                        value={editValues.date}
+                        onChange={(e) =>
+                          handleEditChange("date", e.target.value)
+                        }
+                        label="Date"
+                        size="medium"
+                        sx={inputSx}
+                        inputProps={{
+                          max: new Date().toISOString().split("T")[0],
+                          onKeyDown: (e) => e.preventDefault(),
+                        }}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                      <FormControl fullWidth size="medium" sx={inputSx}>
+                        <InputLabel id="category-label">Category</InputLabel>
+                        <Select
+                          labelId="category-label"
+                          value={editValues.categoryId}
+                          label="Category"
+                          onChange={(e) =>
+                            handleEditChange("categoryId", e.target.value)
+                          }
+                        >
+                          {categories.map((cat) => (
+                            <MenuItem key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <Box display="flex" gap={2}>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            width: "50%",
+                            backgroundColor: "#130037",
+                            "&:hover": { backgroundColor: "#2d005c" },
+                          }}
+                          onClick={handleSave}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            width: "50%",
+                            backgroundColor: "#130037",
+                            "&:hover": { backgroundColor: "#2d005c" },
+                          }}
+                          onClick={() => setEditingExpenseId(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </Box>
+                    </Box>
+                  </>
                 ) : (
                   <Box sx={{ width: "50%" }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -439,26 +467,7 @@ const MyExpenses = ({
                 )}
               </Box>
               {editingExpenseId === expense.id ? (
-                <>
-                  <Tooltip title="Save">
-                    <IconButton
-                      size="small"
-                      sx={commonIconButtonStyles}
-                      onClick={handleSave}
-                    >
-                      <SaveIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Cancel">
-                    <IconButton
-                      size="small"
-                      sx={{ ...commonIconButtonStyles, ml: 2 }}
-                      onClick={() => setEditingExpenseId(null)}
-                    >
-                      <CancelIcon />
-                    </IconButton>
-                  </Tooltip>
-                </>
+                <></>
               ) : (
                 <Tooltip title="Edit Expense">
                   <IconButton
