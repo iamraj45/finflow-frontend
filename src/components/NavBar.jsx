@@ -162,7 +162,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
   };
 
   const drawerList = (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box sx={{ width: '100%' }} role="presentation">
       <Box
         sx={{
           backgroundColor: "#130037",

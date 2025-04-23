@@ -64,7 +64,7 @@ export default function Home() {
 
       const response = await axios.get(url);
       setExpenses(response.data || []);
-        setTotalPages(response.data[0].totalPage || 1);
+      setTotalPages(response.data[0].totalPage || 1);
     } catch (error) {
       console.error("Failed to fetch filtered expenses:", error);
     }
@@ -172,9 +172,17 @@ export default function Home() {
           flexDirection: isMobile ? "column" : "row",
           justifyContent: "center",
           alignItems: "flex-start",
+          px: 3,
+          py: 2,
         }}
       >
-        <Box sx={{ flex: 1, minWidth: "400px" }}>
+        <Box
+          sx={{
+            pr: isMobile ? 0 : 2,
+            pb: isMobile ? 2 : 0,
+            width: isMobile ? "100%" : "50%",
+          }}
+        >
           <MyExpenses
             expenses={expenses}
             onExpenseAdded={handleExpenseAdded}
@@ -189,7 +197,13 @@ export default function Home() {
             totalPages={totalPages}
           />
         </Box>
-        <Box sx={{ flex: 1, minWidth: "400px" }}>
+        <Box
+          sx={{
+            pl: isMobile ? 0 : 2,
+            pt: isMobile ? 2 : 0,
+            width: isMobile ? "100%" : "50%",
+          }}
+        >
           <SpendingCharts
             expenses={chartExpenses}
             totalBudget={totalBudget}
