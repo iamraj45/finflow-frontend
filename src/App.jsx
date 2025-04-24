@@ -7,6 +7,7 @@ import PrivateRoute from "./components/common/PrivateRoute";
 import { CategoryProvider } from "./context/CategoryContext";
 import BudgetPage from "./pages/BudgetPage";
 import { BudgetProvider } from "./context/BudgetContext";
+import ResetPassword from "./components/auth/ResetPassword";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         />
         <Route path="/sign-in" element={<Login />} />
         <Route path="/sign-up" element={<Register />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   );

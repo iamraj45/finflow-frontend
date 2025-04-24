@@ -10,6 +10,10 @@ import {
   Divider,
   useMediaQuery,
   Link,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import { Google, Facebook, LinkedIn } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
@@ -18,6 +22,7 @@ import { loginUser } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { signInWithGoogle } from "../../utils/signInWithGoogle";
+import axios from "axios";
 
 const Login = () => {
   const theme = useTheme();
@@ -27,6 +32,12 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resetEmail, setResetEmail] = useState("rk@gmail.com");
+  const [resetMessage, setResetMessage] = useState("");
+  const [openResetDialog, setOpenResetDialog] = useState(false);
+  const [resetEmailError, setResetEmailError] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -113,6 +124,51 @@ const Login = () => {
       setError("Google Sign-In failed. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handler to open the dialog
+  const handleOpenResetDialog = () => {
+    setOpenResetDialog(true);
+    setResetEmail(email); // Pre-fill with email from login form if available
+    setResetEmailError("");
+  };
+
+  // Handler to close the dialog
+  const handleCloseResetDialog = () => {
+    setOpenResetDialog(false);
+    setResetEmailError("");
+  };
+
+  const handlePasswordResetLink = async () => {
+    setResetMessage("");
+    setError("");
+    setResetEmailError("");
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!resetEmail) {
+      setResetEmailError("Email is required");
+      return;
+    } else if (!emailRegex.test(resetEmail)) {
+      setResetEmailError("Enter a valid email address");
+      return;
+    }
+
+    setIsResetting(true);
+
+    try {
+      await axios.post(
+        `${apiUrl}/api/auth/request-password-reset?email=${resetEmail}`
+      );
+      setResetMessage(
+        `Password reset link sent to ${resetEmail}. Please check your mail`
+      );
+      handleCloseResetDialog();
+    } catch (err) {
+      setResetEmailError("Failed to send link to reset password");
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -242,10 +298,57 @@ const Login = () => {
             alignItems="center"
           >
             <FormControlLabel control={<Checkbox />} label="Remember me" />
-            <Link href="#" underline="hover">
+            <Link
+              href="#"
+              onClick={(e) => {
+                e.preventDefault(); // Prevents the default anchor behavior
+                handleOpenResetDialog();
+              }}
+              underline="hover"
+            >
               Forgot password?
             </Link>
           </Box>
+          {resetMessage && (
+            <Typography variant="body2" color="success" mt={1}>
+              {resetMessage}
+            </Typography>
+          )}
+
+          <Dialog open={openResetDialog} onClose={handleCloseResetDialog}>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogContent>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                Enter your email address, and we'll send you a link to reset
+                your password.
+              </Typography>
+              <TextField
+                autoFocus
+                margin="dense"
+                label="Email Address"
+                type="email"
+                fullWidth
+                variant="outlined"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                error={!!resetEmailError}
+                helperText={resetEmailError}
+              />
+            </DialogContent>
+            <DialogActions
+            sx={{display: 'flex', flexDirection: 'flex-end', gap: 1, mx: 2, mb: 2}}
+            >
+              <Button onClick={handleCloseResetDialog}>Cancel</Button>
+              <Button
+                onClick={handlePasswordResetLink}
+                variant="contained"
+                color="primary"
+                disabled={isResetting}
+              >
+                {isResetting ? "Sending..." : "Send Reset Link"}
+              </Button>
+            </DialogActions>
+          </Dialog>
 
           <Divider sx={{ my: 2 }}>or</Divider>
 
