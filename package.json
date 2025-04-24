@@ -20,6 +20,7 @@
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
+    "firebase": "^11.6.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.25",
     "jwt-decode": "^4.0.0",
