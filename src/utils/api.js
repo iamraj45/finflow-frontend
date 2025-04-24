@@ -5,5 +5,8 @@ const API = axios.create({
   baseURL: `${apiUrl}/api`,
 });
 
-export const loginUser = (loginData) => API.post('/auth/login', loginData);
+export const loginUser = async(payload) => {
+  return API.post('/auth/login', payload);
+}
+
 export const registerUser = (registerData) => API.post('/auth/register', registerData);
