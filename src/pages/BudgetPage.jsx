@@ -1,34 +1,56 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 import {
-  Box, Typography, TextField, Button, Paper, Stack, IconButton,
-  Collapse, CircularProgress, FormControl, InputLabel, Select, MenuItem, Grid
-} from '@mui/material';
-import { Delete, Edit, Add } from '@mui/icons-material';
-import { useSnackbar } from 'notistack';
-import { BudgetContext } from '../context/BudgetContext';
-import { CategoryContext } from '../context/CategoryContext';
-import Navbar from '../components/NavBar';
-import { useMediaQuery } from '@mui/material';
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Stack,
+  IconButton,
+  Collapse,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
+} from "@mui/material";
+import { Delete, Edit, Add } from "@mui/icons-material";
+import { useSnackbar } from "notistack";
+import { BudgetContext } from "../context/BudgetContext";
+import { CategoryContext } from "../context/CategoryContext";
+import Navbar from "../components/NavBar";
+import { useMediaQuery } from "@mui/material";
 
 export default function BudgetPage() {
-  const { totalBudget, categoryBudgets, saveTotalBudget, saveCategoryBudgets, deleteCategoryBudget } = useContext(BudgetContext);
+  const {
+    totalBudget,
+    categoryBudgets,
+    saveTotalBudget,
+    saveCategoryBudgets,
+    deleteCategoryBudget,
+  } = useContext(BudgetContext);
   const { categories } = useContext(CategoryContext);
   const { enqueueSnackbar } = useSnackbar();
-  const [localTotalBudget, setLocalTotalBudget] = useState('');
+  const [localTotalBudget, setLocalTotalBudget] = useState("");
   const [localCategoryBudgets, setLocalCategoryBudgets] = useState([]);
-  const [newBudgets, setNewBudgets] = useState([{ categoryId: '', budget: '' }]);
+  const [newBudgets, setNewBudgets] = useState([
+    { categoryId: "", budget: "" },
+  ]);
   const [showNewCategorySection, setShowNewCategorySection] = useState(false);
-  const [loading, setLoading] = useState({ total: false, categories: false, new: false });
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const [loading, setLoading] = useState({
+    total: false,
+    categories: false,
+    new: false,
+  });
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   const BudgetPage = () => {
     const { enqueueSnackbar } = useSnackbar();
     const handleBudgetSave = () => {
-      enqueueSnackbar('Budget saved successfully!');
+      enqueueSnackbar("Budget saved successfully!");
     };
-    return (
-      <button onClick={handleBudgetSave}>Save Budget</button>
-    );
+    return <button onClick={handleBudgetSave}>Save Budget</button>;
   };
 
   useEffect(() => {
@@ -52,50 +74,54 @@ export default function BudgetPage() {
       await deleteCategoryBudget(categoryToDelete.categoryId);
       enqueueSnackbar(`Deleted budget for ${categoryToDelete.categoryName}`);
     } catch (error) {
-      enqueueSnackbar('Failed to delete budget');
+      enqueueSnackbar("Failed to delete budget");
     }
   };
 
   const handleNewBudgetChange = (index, field, value) => {
     const updated = [...newBudgets];
-    updated[index][field] = field === 'budget' ? parseFloat(value) || '' : value;
+    updated[index][field] =
+      field === "budget" ? parseFloat(value) || "" : value;
     setNewBudgets(updated);
   };
 
   const addNewBudgetField = () => {
-    setNewBudgets([...newBudgets, { categoryId: '', budget: '' }]);
+    setNewBudgets([...newBudgets, { categoryId: "", budget: "" }]);
   };
 
   const handleSaveAllBudgets = async () => {
     setLoading((prev) => ({ ...prev, total: true, categories: true }));
     await saveTotalBudget(parseFloat(localTotalBudget));
     await saveCategoryBudgets(localCategoryBudgets);
-    enqueueSnackbar('All budget changes saved!');
+    enqueueSnackbar("All budget changes saved!");
     setLoading((prev) => ({ ...prev, total: false, categories: false }));
   };
 
   const handleSaveNewBudgets = async () => {
-    const valid = newBudgets.filter(entry => entry.categoryId && entry.budget);
+    const valid = newBudgets.filter(
+      (entry) => entry.categoryId && entry.budget
+    );
     if (valid.length === 0) return;
 
-    const formatted = valid.map(entry => ({
+    const formatted = valid.map((entry) => ({
       categoryId: parseInt(entry.categoryId),
       budget: entry.budget,
-      categoryName: categories.find(c => c.id === parseInt(entry.categoryId))?.name || ''
+      categoryName:
+        categories.find((c) => c.id === parseInt(entry.categoryId))?.name || "",
     }));
 
     const allBudgets = [...localCategoryBudgets, ...formatted];
     setLoading((prev) => ({ ...prev, new: true }));
     await saveCategoryBudgets(allBudgets);
-    enqueueSnackbar('New category budgets added!');
-    setNewBudgets([{ categoryId: '', budget: '' }]);
+    enqueueSnackbar("New category budgets added!");
+    setNewBudgets([{ categoryId: "", budget: "" }]);
     setShowNewCategorySection(false);
     setLoading((prev) => ({ ...prev, new: false }));
   };
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <Box
         sx={{
           display: "flex",
@@ -118,24 +144,47 @@ export default function BudgetPage() {
             <Typography variant="h6" mb={2} gutterBottom>
               Total Monthly Budget
             </Typography>
-            <TextField
-              type="number"
-              value={localTotalBudget}
-              onChange={(e) => setLocalTotalBudget(Math.max(0, e.target.value))}
-              inputProps={{ min: 0 }}
-              error={localTotalBudget < 0}
-              helperText={
-                localTotalBudget < 0 ? "Budget must be non-negative" : ""
-              }
-            />
-
+            <Stack>
+              <TextField
+                type="number"
+                placeholder="Enter your total budget"
+                value={localTotalBudget}
+                onChange={(e) =>
+                  setLocalTotalBudget(Math.max(0, e.target.value))
+                }
+                inputProps={{ min: 0 }}
+                error={localTotalBudget < 0}
+                helperText={
+                  localTotalBudget < 0 ? "Budget must be non-negative" : ""
+                }
+              />
+            </Stack>
             <Typography variant="h6" mt={4} gutterBottom>
               Budget Settings (Per Category)
             </Typography>
             {localCategoryBudgets.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                You have not added budget for any categories yet.
-              </Typography>
+              <>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 2 }}
+                >
+                  You have not added budget for any categories yet.
+                </Typography>
+                <Button
+                  sx={{ mt: 1 }}
+                  variant="contained"
+                  onClick={handleSaveAllBudgets}
+                  disabled={loading.total || loading.categories}
+                  startIcon={
+                    (loading.total || loading.categories) && (
+                      <CircularProgress size={20} />
+                    )
+                  }
+                >
+                  Save Changes
+                </Button>
+              </>
             ) : (
               <>
                 <Stack spacing={2} sx={{ my: 2 }}>
