@@ -1,16 +1,14 @@
-// src/components/TermsAndConditions.jsx
-import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
-  Typography,
-  Link,
-  FormControlLabel,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  FormControlLabel,
+  Link,
+  Typography
 } from '@mui/material';
+import React, { useState } from 'react';
 
 const TermsAndConditions = ({ agreed, setAgreed, setError }) => {
   const [open, setOpen] = useState(false);

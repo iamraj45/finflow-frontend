@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { registerUser } from '../../utils/api';
-import { useNavigate } from 'react-router-dom';
-import TermsAndConditions from '../TermsAndConditions';
+import React, { useState, useEffect } from "react";
+import { registerUser, loginUser } from "../../utils/api";
+import { useNavigate } from "react-router-dom";
+import TermsAndConditions from "../TermsAndConditions";
 import {
   Box,
   Grid,
@@ -11,63 +11,65 @@ import {
   Divider,
   useMediaQuery,
   Link,
-} from '@mui/material';
-import { Google, Facebook, GitHub, LinkedIn } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
-import image from '../../assets/img.png';
+} from "@mui/material";
+import { Google, Facebook, GitHub, LinkedIn } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
+import image from "../../assets/img.png";
+import { jwtDecode } from "jwt-decode";
+import { signInWithGoogle } from "../../utils/signInWithGoogle";
 
 const Register = () => {
   const theme = useTheme();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
-  const [error, setError] = useState('');
-  const [nameError, setNameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      navigate('/');
+      navigate("/");
     }
   }, []);
 
   const handleRegister = async () => {
-    setNameError('');
-    setEmailError('');
-    setPasswordError('');
-    setError('');
-    setSuccessMessage('');
+    setNameError("");
+    setEmailError("");
+    setPasswordError("");
+    setError("");
+    setSuccessMessage("");
     setIsSubmitting(false);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let isValid = true;
 
     if (!name) {
-      setNameError('Name is required');
+      setNameError("Name is required");
       isValid = false;
     }
 
     if (!email) {
-      setEmailError('Email is required');
+      setEmailError("Email is required");
       isValid = false;
     } else if (!emailRegex.test(email)) {
-      setEmailError('Enter a valid email address');
+      setEmailError("Enter a valid email address");
       isValid = false;
     }
 
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError("Password is required");
       isValid = false;
     }
 
     if (!agreed) {
-      setError('You must agree to the Terms & Conditions to proceed.');
+      setError("You must agree to the Terms & Conditions to proceed.");
       isValid = false;
     }
 
@@ -81,47 +83,97 @@ const Register = () => {
         setIsSubmitting(false);
         return;
       }
-      setSuccessMessage('Registration successful! Redirecting to login...');
+      setSuccessMessage("Registration successful! Redirecting to login...");
       setTimeout(() => {
-        navigate('/sign-in');
+        navigate("/sign-in");
       }, 3000);
     } catch (err) {
-      console.error('Registration failed:', err);
-      alert('Something went wrong. Try again!');
-    }
-    finally {
+      console.error("Registration failed:", err);
+      alert("Something went wrong. Try again!");
+    } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const handleGoogleRegister = async () => {
+    setError("");
+    if (!agreed) {
+      setError("You must agree to the Terms & Conditions to proceed.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { success, user, error: googleError } = await signInWithGoogle();
+      if (!success) throw googleError;
+
+      const idToken = await user.getIdToken();
+
+      // Send Firebase token to backend to get your JWT
+      const response = await loginUser({ firebaseToken: idToken });
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
+
+      const decoded = jwtDecode(token);
+      localStorage.setItem("userId", decoded.userId);
+      localStorage.setItem("email", decoded.email);
+      localStorage.setItem("userName", decoded.name);
+
+      navigate("/");
+    } catch (err) {
+      console.error("Google Sign-In failed:", err);
+      setError("Google Sign-In failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <Grid container sx={{ height: '100vh', backgroundColor: 'var(--color-primary)' }}>
+    <Grid
+      container
+      sx={{ height: "100vh", backgroundColor: "var(--color-primary)" }}
+    >
       {/* LEFT SECTION */}
       {!isSmallScreen && (
         <Grid
           item
           xs={12}
           md={6}
-          width={'60%'}
+          width={"60%"}
           sx={{
             backgroundImage: `url(${image})`,
-            backgroundPosition: 'center',
-            color: 'var(--color-primary)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            backgroundPosition: "center",
+            color: "var(--color-primary)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
             p: 10,
           }}
         >
-          <Typography variant="h3" fontWeight="bold" gutterBottom color='var(--color-primary)'>
+          <Typography
+            variant="h3"
+            fontWeight="bold"
+            gutterBottom
+            color="var(--color-primary)"
+          >
             Join the
           </Typography>
-          <Typography variant="h4" fontWeight="bold" gutterBottom color='var(--color-primary)'>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            gutterBottom
+            color="var(--color-primary)"
+          >
             FinFlow Community
           </Typography>
-          <Typography variant="body1" sx={{ mt: 2 }} color='var(--color-primary)'>
+          <Typography
+            variant="body1"
+            sx={{ mt: 2 }}
+            color="var(--color-primary)"
+          >
             Start tracking your expenses like a pro!
           </Typography>
         </Grid>
@@ -133,12 +185,12 @@ const Register = () => {
         xs={12}
         md={6}
         sx={{
-          width: isSmallScreen ? '100%' : '40%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          width: isSmallScreen ? "100%" : "40%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           px: { xs: 3, sm: 10 },
-          backgroundColor: 'var(--color-primary)',
+          backgroundColor: "var(--color-primary)",
         }}
       >
         <Box width="100%" maxWidth="400px">
@@ -158,7 +210,7 @@ const Register = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
+            InputProps={{ sx: { backgroundColor: "var(--color-input-bg)" } }}
           />
           <TextField
             label="Email"
@@ -169,7 +221,7 @@ const Register = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
+            InputProps={{ sx: { backgroundColor: "var(--color-input-bg)" } }}
           />
           <TextField
             label="Password"
@@ -181,7 +233,7 @@ const Register = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            InputProps={{ sx: { backgroundColor: 'var(--color-input-bg)' } }}
+            InputProps={{ sx: { backgroundColor: "var(--color-input-bg)" } }}
           />
           <TermsAndConditions
             agreed={agreed}
@@ -205,14 +257,14 @@ const Register = () => {
             disabled={isSubmitting}
             sx={{
               mt: 2,
-              backgroundColor: 'var(--color-secondary)',
-              color: 'var(--color-button-text)',
-              '&:hover': {
-                backgroundColor: '#220057',
+              backgroundColor: "var(--color-secondary)",
+              color: "var(--color-button-text)",
+              "&:hover": {
+                backgroundColor: "#220057",
               },
             }}
           >
-            {isSubmitting ? 'Please wait...' : 'Sign Up'}
+            {isSubmitting ? "Please wait..." : "Sign Up"}
           </Button>
 
           <Divider sx={{ my: 2 }}>or</Divider>
@@ -224,11 +276,13 @@ const Register = () => {
                 variant="outlined"
                 fullWidth
                 startIcon={<Google />}
+                onClick={handleGoogleRegister}
+                disabled={isSubmitting}
               >
                 Continue with Google
               </Button>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
               <Box sx={{ flex: 1 }}>
                 <Button variant="outlined" fullWidth startIcon={<Facebook />}>
                   Facebook
@@ -243,8 +297,8 @@ const Register = () => {
           </Box>
 
           <Typography mt={4} align="center">
-            Already have an account?{' '}
-            <Link href="/sign-in" underline="hover" >
+            Already have an account?{" "}
+            <Link href="/sign-in" underline="hover">
               Log in
             </Link>
           </Typography>
