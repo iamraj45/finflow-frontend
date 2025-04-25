@@ -45,7 +45,7 @@ body {
 }
 
 .MuiOutlinedInput-root {
-  background-color: var(--color-input-bg);
+  background-color: var(--color-input-bg);  
 }
 
 .MuiOutlinedInput-notchedOutline {
@@ -73,8 +73,6 @@ body {
 
 /* Dropdown list */
 .MuiMenu-list {
-  border: 2px solid var(--color-secondary) !important;
-  border-radius: 4px !important;
   background-color: var(--color-primary) !important;
   color: var(--color-secondary) !important;
 }
@@ -85,10 +83,10 @@ body {
   color: var(--color-primary) !important;
 }
 
-.Mui-selected {
+/* .Mui-selected {
   background-color: var(--color-secondary) !important;
   color: var(--color-primary) !important;
-}
+} */
 
 .MuiDateCalendar-root {
   border: 2px solid var(--color-secondary);
@@ -102,6 +100,7 @@ body {
 .MuiDialog-paper {
   background-color: var(--color-primary) !important;
   color: var(--color-secondary) !important;
+  padding: 15px !important;
 }
 
 .MuiAlert-root {
@@ -205,5 +204,8 @@ input[type="number"] {
 @media (max-width: 600px) {
   .rdrDefinedRangesWrapper {
     display: none !important;
+  }
+  .MuiDialog-paper{
+    padding: 5px !important;
   }
 }

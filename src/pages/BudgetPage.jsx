@@ -66,7 +66,7 @@ export default function BudgetPage() {
 
   const handleCategoryBudgetChange = (index, value) => {
     const updated = [...localCategoryBudgets];
-    updated[index].budget = Math.max(0, parseFloat(value) || 0); // Ensure non-negative value
+    updated[index].budget = value;
     setLocalCategoryBudgets(updated);
   };
 
@@ -241,7 +241,7 @@ export default function BudgetPage() {
                       <FormControl fullWidth variant="standard" sx={{ pl: 1 }}>
                         <Input
                           type="number"
-                          label={cat.categoryName}  
+                          label={cat.categoryName}
                           value={cat.budget}
                           onChange={(e) => {
                             const value = e.target.value;
