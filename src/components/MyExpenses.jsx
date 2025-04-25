@@ -359,12 +359,32 @@ const MyExpenses = ({
                       <TextField
                         type="number"
                         value={editValues.amount}
-                        onChange={(e) =>
-                          handleEditChange("amount", e.target.value)
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "") {
+                            handleEditChange("amount", "");
+                            return;
+                          }
+                          const numValue = parseFloat(value);
+                          if (!isNaN(numValue) && numValue >= 0) {
+                            if (numValue === 0) {
+                              handleEditChange("amount", "0");
+                            } else {
+                              handleEditChange("amount", numValue.toString());
+                            }
+                          }
+                        }}
                         label="Amount"
                         size="medium"
                         sx={inputSx}
+                        inputProps={{
+                          min: 0,
+                          onKeyDown: (e) => {
+                            if (e.key === "-" || e.key === "e") {
+                              e.preventDefault();
+                            }
+                          },
+                        }}
                       />
                       <TextField
                         value={editValues.description}

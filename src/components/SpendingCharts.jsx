@@ -250,27 +250,28 @@ const SpendingCharts = ({
           >
             <PieChart
               height={250}
-              width={250} // Adjust width to match the height for a circular pie chart
+              width={250} 
+              sx={{mx: 2}}
               series={[
                 {
-                  arcLabel: (item) => `${item.value.toFixed(0)}%`, // Format the labels as percentages
+                  arcLabel: (item) => `${item.value.toFixed(0)}%`, 
                   arcLabelMinAngle: 20, // Minimum angle before showing labels
                   data: categoryData.map((entry, index) => ({
                     id: entry.category,
                     value: entry.percentage,
                     label: entry.category,
-                    color: COLORS[index % COLORS.length], // Assign a color from the COLORS array
+                    color: COLORS[index % COLORS.length], 
                   })),
                   highlightScope: { fade: "global", highlight: "item" }, // Highlight functionality for slices
                   faded: {
                     innerRadius: 30,
                     additionalRadius: -30,
                     color: "gray",
-                  }, // Style for faded slices
+                  }, 
                 },
               ]}
               slotProps={{
-                legend: { hidden: false }, // Display legend
+                legend: { hidden: false },
               }}
             />
           </Box>
