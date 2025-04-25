@@ -166,7 +166,9 @@ const Login = () => {
       );
       handleCloseResetDialog();
     } catch (err) {
-      setResetEmailError("Failed to send link to reset password");
+      setResetEmailError(
+        "Failed to send link to reset password. Is the email registered with FinFlow?"
+      );
     } finally {
       setIsResetting(false);
     }
@@ -336,7 +338,13 @@ const Login = () => {
               />
             </DialogContent>
             <DialogActions
-            sx={{display: 'flex', flexDirection: 'flex-end', gap: 1, mx: 2, mb: 2}}
+              sx={{
+                display: "flex",
+                flexDirection: "flex-end",
+                gap: 1,
+                mx: 2,
+                mb: 2,
+              }}
             >
               <Button onClick={handleCloseResetDialog}>Cancel</Button>
               <Button

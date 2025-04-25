@@ -25,6 +25,7 @@ export const signInWithGoogle = async () => {
     localStorage.setItem('userId', user.uid);
     localStorage.setItem('email', user.email);
     localStorage.setItem('userName', user.displayName);
+    localStorage.setItem('userPhoto', user.photoURL);
 
     return { success: true, user };
   } catch (error) {
