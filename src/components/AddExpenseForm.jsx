@@ -9,6 +9,7 @@ import {
   Paper,
   Snackbar,
   Alert,
+  useMediaQuery
 } from "@mui/material";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -70,21 +71,21 @@ const AddExpenseForm = ({ onSuccess }) => {
       }
     } catch (error) {
       console.error("Error adding expense:", error);
-      alert("Error occurred. Check console for details.");
     } finally {
       setLoading(false); // Stop loading
     }
   };
+
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Paper
         elevation={6}
         sx={{
-          p: { xs: 2, sm: 3, md: 4 },
-          width: "80%",
-          maxWidth: { xs: "80%", sm: 400, md: 500 },
-          mx: "auto",
+          px: isMobile? 2: 6,
+          py: 2,
+          mx: 'auto',
           boxShadow: "none",
         }}
       >

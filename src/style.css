@@ -73,8 +73,6 @@ body {
 
 /* Dropdown list */
 .MuiMenu-list {
-  border: 2px solid var(--color-secondary) !important;
-  border-radius: 4px !important;
   background-color: var(--color-primary) !important;
   color: var(--color-secondary) !important;
 }
@@ -85,10 +83,10 @@ body {
   color: var(--color-primary) !important;
 }
 
-.Mui-selected {
+/* .Mui-selected {
   background-color: var(--color-secondary) !important;
   color: var(--color-primary) !important;
-}
+} */
 
 .MuiDateCalendar-root {
   border: 2px solid var(--color-secondary);

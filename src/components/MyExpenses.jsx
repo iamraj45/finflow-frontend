@@ -20,6 +20,7 @@ import {
   Chip,
   Stack,
   Pagination,
+  useMediaQuery,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -68,6 +69,7 @@ const MyExpenses = ({
   const [categoryFilterOpen, setCategoryFilterOpen] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   const inputSx = {
     "& .MuiInputBase-root": {
@@ -546,8 +548,8 @@ const MyExpenses = ({
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "90%",
-            maxWidth: "80%",
+            width: "80%",
+            maxWidth: isMobile? "90%": "40%",
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 3,
