@@ -1,40 +1,45 @@
-import React, { useState, useContext } from "react";
-import {
-  Box,
-  TextField,
-  Typography,
-  Tooltip,
-  Modal,
-  IconButton,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  Snackbar,
-  Alert,
-  MenuItem,
-  FormControl,
-  Button,
-  InputLabel,
-  Select,
-  Chip,
-  Stack,
-  Pagination,
-  useMediaQuery,
-} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import AddExpenseForm from "./AddExpenseForm";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Checkbox from "@mui/material/Checkbox";
 import EditIcon from "@mui/icons-material/Edit";
-import axios from "../utils/axios";
-import { CategoryContext } from "../context/CategoryContext";
-import ExportButtons from "./ExportButtons";
-import DateRangeFilter from "./DateRangeFilter";
-import CategoryFilter from "./CategoryFilter";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  List,
+  ListItem,
+  MenuItem,
+  Modal,
+  OutlinedInput,
+  Pagination,
+  Paper,
+  Select,
+  Snackbar,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
+import React, { useContext, useState } from "react";
+import { CategoryContext } from "../context/CategoryContext";
+import axios from "../utils/axios";
+import AddExpenseForm from "./AddExpenseForm";
+import CategoryFilter from "./CategoryFilter";
+import DateRangeFilter from "./DateRangeFilter";
+import ExportButtons from "./ExportButtons";
 
 const MyExpenses = ({
   expenses,
@@ -67,6 +72,8 @@ const MyExpenses = ({
   const handleFilterClose = () => setFilterOpen(false);
 
   const [categoryFilterOpen, setCategoryFilterOpen] = useState(false);
+
+  const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -151,6 +158,7 @@ const MyExpenses = ({
       );
       if (response.data.status === true) {
         setEditingExpenseId(null);
+        setOpenEditDialog(false);
         onExpenseAdded(); // refresh
       } else {
         alert("Failed to update expense");
@@ -355,173 +363,161 @@ const MyExpenses = ({
                   width: "100%",
                 }}
               >
-                {editingExpenseId === expense.id ? (
-                  <>
-                    <Box display="flex" flexDirection="column" gap={1} my={2}>
-                      <TextField
-                        type="number"
-                        value={editValues.amount}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === "") {
-                            handleEditChange("amount", "");
-                            return;
-                          }
-                          const numValue = parseFloat(value);
-                          if (!isNaN(numValue) && numValue >= 0) {
-                            if (numValue === 0) {
-                              handleEditChange("amount", "0");
-                            } else {
-                              handleEditChange("amount", numValue.toString());
-                            }
-                          }
-                        }}
-                        label="Amount"
-                        size="medium"
-                        sx={inputSx}
-                        inputProps={{
-                          min: 0,
-                          onKeyDown: (e) => {
-                            if (e.key === "-" || e.key === "e") {
-                              e.preventDefault();
-                            }
-                          },
-                        }}
-                      />
-                      <TextField
-                        value={editValues.description}
-                        onChange={(e) =>
-                          handleEditChange("description", e.target.value)
-                        }
-                        label="Description"
-                        size="medium"
-                        sx={inputSx}
-                      />
-                      <TextField
-                        type="date"
-                        value={editValues.date}
-                        onChange={(e) =>
-                          handleEditChange("date", e.target.value)
-                        }
-                        label="Date"
-                        size="medium"
-                        sx={inputSx}
-                        inputProps={{
-                          max: new Date().toISOString().split("T")[0],
-                          onKeyDown: (e) => e.preventDefault(),
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                      <FormControl fullWidth size="medium" sx={inputSx}>
-                        <InputLabel id="category-label">Category</InputLabel>
-                        <Select
-                          labelId="category-label"
-                          value={editValues.categoryId}
-                          label="Category"
-                          onChange={(e) =>
-                            handleEditChange("categoryId", e.target.value)
-                          }
-                        >
-                          {categories.map((cat) => (
-                            <MenuItem key={cat.id} value={cat.id}>
-                              {cat.name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <Box display="flex" gap={2}>
-                        <Button
-                          variant="contained"
-                          sx={{
-                            width: "50%",
-                            backgroundColor: "#130037",
-                            "&:hover": { backgroundColor: "#2d005c" },
-                          }}
-                          onClick={handleSave}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          variant="contained"
-                          sx={{
-                            width: "50%",
-                            backgroundColor: "#130037",
-                            "&:hover": { backgroundColor: "#2d005c" },
-                          }}
-                          onClick={() => setEditingExpenseId(null)}
-                        >
-                          Cancel
-                        </Button>
-                      </Box>
-                    </Box>
-                  </>
-                ) : (
-                  <Box sx={{ width: "50%" }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {getCategoryName(expense.categoryId)}: ₹{expense.amount}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {expense.description}
-                    </Typography>
-                  </Box>
-                )}
-
-                {editingExpenseId !== expense.id && (
-                  <Typography
-                    className="date-text"
-                    variant="caption"
-                    color="textSecondary"
-                    sx={{
-                      whiteSpace: "nowrap",
-                      transition: "transform 0.3s ease",
-                      position: "relative",
-                      zIndex: 1,
-                    }}
-                  >
-                    {new Date(expense.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                <Box sx={{ width: "50%" }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                    {getCategoryName(expense.categoryId)}: ₹{expense.amount}
                   </Typography>
-                )}
+                  <Typography variant="caption" color="text.secondary">
+                    {expense.description}
+                  </Typography>
+                </Box>
+
+                <Typography
+                  className="date-text"
+                  variant="caption"
+                  color="textSecondary"
+                  sx={{
+                    whiteSpace: "nowrap",
+                    transition: "transform 0.3s ease",
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  {new Date(expense.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </Typography>
               </Box>
-              {editingExpenseId === expense.id ? (
-                <></>
-              ) : (
-                <Tooltip title="Edit Expense">
-                  <IconButton
-                    className="edit-icon"
-                    size="small"
-                    sx={{
-                      ...commonIconButtonStyles,
-                      position: "absolute",
-                      right: 16,
-                      transform: "translateX(20px)",
-                      opacity: 0,
-                      transition: "opacity 0.3s, transform 0.3s",
-                      zIndex: 2,
-                    }}
-                    onClick={() => {
-                      setEditingExpenseId(expense.id);
-                      setEditValues({
-                        amount: expense.amount,
-                        description: expense.description,
-                        date: new Date(expense.date).toLocaleDateString(
-                          "en-CA"
-                        ),
-                        categoryId: expense.categoryId,
-                      });
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
+              <Tooltip title="Edit Expense">
+                <IconButton
+                  className="edit-icon"
+                  size="small"
+                  sx={{
+                    ...commonIconButtonStyles,
+                    position: "absolute",
+                    right: 16,
+                    transform: "translateX(20px)",
+                    opacity: 0,
+                    transition: "opacity 0.3s, transform 0.3s",
+                    zIndex: 2,
+                  }}
+                  onClick={() => {
+                    setEditingExpenseId(expense.id);
+                    setEditValues({
+                      amount: expense.amount,
+                      description: expense.description,
+                      date: new Date(expense.date).toLocaleDateString("en-CA"),
+                      categoryId: expense.categoryId,
+                    });
+                    setOpenEditDialog(true);
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
             </ListItem>
           ))}
         </List>
       )}
+      <Dialog
+        open={openEditDialog}
+        onClose={() => setOpenEditDialog(false)}
+        fullWidth
+      >
+        <DialogTitle>Edit Expense</DialogTitle>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
+          <FormControl fullWidth sx={{ mt: 1 }}>
+            <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-amount"
+              type="number"
+              startAdornment={
+                <InputAdornment position="start">₹</InputAdornment>
+              }
+              label="Amount"
+              value={editValues.amount}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "") {
+                  handleEditChange("amount", "");
+                  return;
+                }
+                const numValue = parseFloat(value);
+                if (!isNaN(numValue) && numValue >= 0) {
+                  handleEditChange("amount", numValue.toString());
+                }
+              }}
+              inputProps={{
+                min: 0,
+                onKeyDown: (e) => {
+                  if (e.key === "-" || e.key === "e") {
+                    e.preventDefault();
+                  }
+                },
+              }}
+            />
+          </FormControl>
+          <TextField
+            value={editValues.description}
+            onChange={(e) => handleEditChange("description", e.target.value)}
+            label="Description"
+          />
+          <TextField
+            type="date"
+            value={editValues.date}
+            onChange={(e) => handleEditChange("date", e.target.value)}
+            label="Date"
+            InputLabelProps={{ shrink: true }}
+            inputProps={{
+              max: new Date().toISOString().split("T")[0],
+              onKeyDown: (e) => e.preventDefault(),
+            }}
+          />
+          <FormControl fullWidth>
+            <InputLabel id="category-label">Category</InputLabel>
+            <Select
+              labelId="category-label"
+              value={editValues.categoryId}
+              label="Category"
+              onChange={(e) => handleEditChange("categoryId", e.target.value)}
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+          <Button
+            sx={{ width: isMobile ? "50%" : "auto", px: isMobile ? 0 : 3 }}
+            onClick={() => setOpenEditDialog(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              width: isMobile ? "50%" : "auto",
+              px: isMobile ? 0 : 3,
+              backgroundColor: "var(--color-secondary)",
+              "&:hover": { backgroundColor: "#2d005c" },
+            }}
+            onClick={() => {
+              handleSave();
+              setOpenEditDialog(false);
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {totalPages > 1 && (
         <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
           <Pagination
@@ -549,7 +545,7 @@ const MyExpenses = ({
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "80%",
-            maxWidth: isMobile? "90%": "40%",
+            maxWidth: isMobile ? "90%" : "40%",
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 3,

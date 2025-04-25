@@ -1,20 +1,22 @@
-import React, { useState } from "react";
-import axios from "../utils/axios";
 import {
+  Alert,
   Box,
   Button,
   MenuItem,
-  TextField,
-  Typography,
   Paper,
   Snackbar,
-  Alert,
-  useMediaQuery
+  TextField,
+  FormControl,
+  OutlinedInput,
+  InputAdornment,
+  InputLabel,
+  useMediaQuery,
 } from "@mui/material";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { CategoryContext } from "../context/CategoryContext";
+import axios from "../utils/axios";
 
 const AddExpenseForm = ({ onSuccess }) => {
   const [amount, setAmount] = useState("");
@@ -83,9 +85,9 @@ const AddExpenseForm = ({ onSuccess }) => {
       <Paper
         elevation={6}
         sx={{
-          px: isMobile? 2: 6,
+          px: isMobile ? 2 : 6,
           py: 2,
-          mx: 'auto',
+          mx: "auto",
           boxShadow: "none",
         }}
       >
@@ -94,37 +96,44 @@ const AddExpenseForm = ({ onSuccess }) => {
           onSubmit={handleSubmit}
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
-          <TextField
-            label="Amount"
-            type="number"
-            fullWidth
-            value={amount}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === "") {
-                setAmount("");
-                return;
+          <FormControl fullWidth sx={{ mt: 1 }}>
+            <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-amount"
+              label="Amount"
+              type="number"
+              startAdornment={
+                <InputAdornment position="start">₹</InputAdornment>
               }
-              const numValue = parseFloat(value);
-              if (!isNaN(numValue) && numValue >= 0) {
-                if (numValue === 0) {
-                  setAmount("0");
-                } else {
-                  setAmount(numValue.toString());
+              fullWidth
+              value={amount}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "") {
+                  setAmount("");
+                  return;
                 }
-              }
-            }}
-            required
-            InputLabelProps={{ required: false }}
-            inputProps={{
-              min: 0,
-              onKeyDown: (e) => {
-                if (e.key === "-" || e.key === "e") {
-                  e.preventDefault();
+                const numValue = parseFloat(value);
+                if (!isNaN(numValue) && numValue >= 0) {
+                  if (numValue === 0) {
+                    setAmount("0");
+                  } else {
+                    setAmount(numValue.toString());
+                  }
                 }
-              },
-            }}
-          />
+              }}
+              required
+              InputLabelProps={{ required: false }}
+              inputProps={{
+                min: 0,
+                onKeyDown: (e) => {
+                  if (e.key === "-" || e.key === "e") {
+                    e.preventDefault();
+                  }
+                },
+              }}
+            />
+          </FormControl>
           <TextField
             select
             label="Category"
