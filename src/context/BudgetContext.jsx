@@ -12,6 +12,8 @@ export const BudgetProvider = ({ children }) => {
 
   const [userData, setUserData] = useState(null);
 
+  const [expenses, setExpenses] = useState(null);
+
   const fetchBudgets = async () => {
     try {
       const totalRes = await axios.get(
@@ -72,8 +74,23 @@ export const BudgetProvider = ({ children }) => {
     }
   };
 
+  const fetchExpenses = async () => {
+    try {
+      const startEpoch = new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0, 0).getTime();
+
+      const endEpoch = new Date().setHours(23, 59, 59, 999);
+      const response = await axios.get(
+        `${apiUrl}/api/expenses/getExpenses?userId=${userId}&startDate=${startEpoch}&endDate=${endEpoch}`
+      );
+      setExpenses(response.data);
+    } catch (error) {
+      console.error("Failed to fetch expenses:", error);
+    }
+  };
+
   useEffect(() => {
     fetchBudgets();
+    fetchExpenses();
   }, [userId]);
 
   return (
@@ -85,6 +102,7 @@ export const BudgetProvider = ({ children }) => {
         saveTotalBudget,
         saveCategoryBudgets,
         deleteCategoryBudget,
+        expenses,
       }}
     >
       {children}

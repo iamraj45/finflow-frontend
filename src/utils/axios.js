@@ -24,6 +24,7 @@ instance.interceptors.response.use(
       localStorage.removeItem('userId');
       localStorage.removeItem('email');
       localStorage.removeItem('userName');
+      localStorage.removeItem('userPhoto');
 
       // Redirect to login page
       window.location.href = '/sign-in';

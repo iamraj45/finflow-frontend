@@ -1,26 +1,28 @@
-import { useContext, useEffect, useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
-  Typography,
-  TextField,
   Button,
-  Paper,
-  Stack,
-  IconButton,
-  Collapse,
   CircularProgress,
   FormControl,
+  FormHelperText,
+  IconButton,
+  Input,
+  InputAdornment,
   InputLabel,
-  Select,
   MenuItem,
-  Grid,
+  OutlinedInput,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
-import { Delete, Edit, Add } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
+import { useContext, useEffect, useState } from "react";
+import Navbar from "../components/NavBar";
 import { BudgetContext } from "../context/BudgetContext";
 import { CategoryContext } from "../context/CategoryContext";
-import Navbar from "../components/NavBar";
-import { useMediaQuery } from "@mui/material";
 
 export default function BudgetPage() {
   const {
@@ -29,6 +31,7 @@ export default function BudgetPage() {
     saveTotalBudget,
     saveCategoryBudgets,
     deleteCategoryBudget,
+    expenses,
   } = useContext(BudgetContext);
   const { categories } = useContext(CategoryContext);
   const { enqueueSnackbar } = useSnackbar();
@@ -119,6 +122,8 @@ export default function BudgetPage() {
     setLoading((prev) => ({ ...prev, new: false }));
   };
 
+  const amountSpent = (expenses || []).reduce((sum, e) => sum + e.amount, 0);
+
   return (
     <>
       <Navbar />
@@ -126,41 +131,67 @@ export default function BudgetPage() {
         sx={{
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
-          alignItems: "flex-start",
           justifyContent: "center",
+          alignItems: "flex-start",
+          px: 3,
+          py: 2,
         }}
       >
         {/* Left Section */}
         <Box
           sx={{
-            flex: 1,
-            minWidth: "400px",
-            border: "1px solid #ccc",
-            p: 4,
-            borderRadius: 0,
+            pr: isMobile ? 0 : 2,
+            pb: isMobile ? 2 : 0,
+            width: isMobile ? "100%" : "50%",
           }}
         >
-          <Paper elevation={2}>
+          <Paper elevation={2} sx={{}}>
             <Typography variant="h6" mb={2} gutterBottom>
               Total Monthly Budget
             </Typography>
-            <Stack>
-              <TextField
-                type="number"
-                placeholder="Enter your total budget"
-                value={localTotalBudget}
-                onChange={(e) =>
-                  setLocalTotalBudget(Math.max(0, e.target.value))
-                }
-                inputProps={{ min: 0 }}
-                error={localTotalBudget < 0}
-                helperText={
-                  localTotalBudget < 0 ? "Budget must be non-negative" : ""
-                }
-              />
+            <Stack direction="row">
+              <FormControl fullWidth variant="standard">
+                <OutlinedInput
+                  type="number"
+                  id="outlined-adornment-amount"
+                  placeholder="Enter your total budget"
+                  value={localTotalBudget}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "") {
+                      setLocalTotalBudget("");
+                      return;
+                    }
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue) && numValue >= 0) {
+                      if (numValue === 0) {
+                        setLocalTotalBudget("0");
+                      } else {
+                        setLocalTotalBudget(numValue.toString());
+                      }
+                    }
+                  }}
+                  inputProps={{
+                    min: 0,
+                    onKeyDown: (e) => {
+                      if (e.key === "-" || e.key === "e") {
+                        e.preventDefault();
+                      }
+                    },
+                  }}
+                  startAdornment={
+                    <InputAdornment position="start" sx={{ pl: 1 }}>
+                      ₹
+                    </InputAdornment>
+                  }
+                />
+                <Typography mt={1}>
+                  You have spent <span>₹ {amountSpent}</span> this month.
+                </Typography>
+              </FormControl>
             </Stack>
             <Typography variant="h6" mt={4} gutterBottom>
-              Budget Settings (Per Category)
+              Budget Per Category
             </Typography>
             {localCategoryBudgets.length === 0 ? (
               <>
@@ -187,28 +218,74 @@ export default function BudgetPage() {
               </>
             ) : (
               <>
-                <Stack spacing={2} sx={{ my: 2 }}>
+                <Stack
+                  spacing={2}
+                  sx={{
+                    my: 2,
+                    position: "relative",
+                    border: "1px solid var(--color-secondary)",
+                    borderRadius: 1,
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                    paddingY: 2,
+                    paddingX: 2,
+                    backgroundColor: "#fff",
+                    transition: "box-shadow 0.2s",
+                    overflow: "hidden",
+                    "&:hover": {
+                      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    },
+                  }}
+                >
                   {localCategoryBudgets.map((cat, index) => (
                     <Stack direction="row" spacing={2} key={cat.categoryId}>
-                      <TextField
-                        label={cat.categoryName}
-                        type="number"
-                        value={cat.budget}
-                        onChange={(e) =>
-                          handleCategoryBudgetChange(index, e.target.value)
-                        }
-                        fullWidth
-                        inputProps={{ min: 0 }}
-                        error={cat.budget < 0}
-                        helperText={
-                          cat.budget < 0 ? "Budget must be non-negative" : ""
-                        }
-                      />
+                      <FormControl fullWidth variant="standard" sx={{ pl: 1 }}>
+                        <Input
+                          type="number"
+                          label={cat.categoryName}  
+                          value={cat.budget}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "") {
+                              handleCategoryBudgetChange(index, "");
+                              return;
+                            }
+                            const numValue = parseFloat(value);
+                            if (!isNaN(numValue) && numValue >= 0) {
+                              if (numValue === 0) {
+                                handleCategoryBudgetChange(index, "0");
+                              } else {
+                                handleCategoryBudgetChange(
+                                  index,
+                                  numValue.toString()
+                                );
+                              }
+                            }
+                          }}
+                          inputProps={{
+                            min: 0,
+                            onKeyDown: (e) => {
+                              if (e.key === "-" || e.key === "e") {
+                                e.preventDefault();
+                              }
+                            },
+                          }}
+                          startAdornment={
+                            <InputAdornment position="start">₹</InputAdornment>
+                          }
+                        />
+                        <FormHelperText
+                          id="standard-weight-helper-text"
+                          sx={{ color: "var(--color-secondary)" }}
+                        >
+                          {cat.categoryName}
+                        </FormHelperText>
+                      </FormControl>
                       <IconButton
                         color="error"
                         onClick={() => handleDeleteCategoryBudget(index)}
+                        sx={{ p: 2 }}
                       >
-                        <Delete />
+                        <DeleteIcon />
                       </IconButton>
                     </Stack>
                   ))}
@@ -235,11 +312,10 @@ export default function BudgetPage() {
         {/* Right Section - Add New Category Budgets */}
         <Box
           sx={{
-            flex: 1,
-            minWidth: "400px",
-            border: "1px solid #ccc",
-            p: 4,
-            borderRadius: 0,
+            pb: isMobile ? 0 : 2,
+            pt: isMobile ? 2 : 0,
+            pl: isMobile ? 0 : 2,
+            width: isMobile ? "100%" : "50%",
           }}
         >
           <Paper elevation={2}>

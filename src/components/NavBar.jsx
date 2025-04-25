@@ -159,6 +159,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
     localStorage.removeItem("hasSeenNotifications");
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userPhoto");
     setDrawerOpen(false);
     navigate("/sign-in");
   };
@@ -303,7 +304,6 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
               size="large"
               color="inherit"
               onClick={handleNotificationClick}
-              sx={{ mr: 1 }}
             >
               <Badge
                 color="error"
@@ -319,6 +319,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
               edge="end"
               color="inherit"
               onClick={toggleDrawer(true)}
+              sx={{ pr: 2 }}
             >
               <MenuIcon />
             </IconButton>
