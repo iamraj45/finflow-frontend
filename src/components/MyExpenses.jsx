@@ -471,7 +471,6 @@ const MyExpenses = ({
             value={editValues.date}
             onChange={(e) => handleEditChange("date", e.target.value)}
             label="Date"
-            InputLabelProps={{ shrink: true }}
             inputProps={{
               max: new Date().toISOString().split("T")[0],
               onKeyDown: (e) => e.preventDefault(),

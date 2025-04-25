@@ -123,7 +123,6 @@ const AddExpenseForm = ({ onSuccess }) => {
                 }
               }}
               required
-              InputLabelProps={{ required: false }}
               inputProps={{
                 min: 0,
                 onKeyDown: (e) => {
