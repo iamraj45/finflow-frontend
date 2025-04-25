@@ -51,6 +51,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
 
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName");
+  const userPhoto = localStorage.getItem("userPhoto");
 
   const notificationOpen = Boolean(notificationAnchorEl);
 
@@ -86,7 +87,8 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
     const categoryWise = Object.entries(categoryMap)
       .map(([id, amount]) => {
         const categoryName =
-          categories.find((cat) => cat.id === parseInt(id))?.name || "Unknown category";
+          categories.find((cat) => cat.id === parseInt(id))?.name ||
+          "Unknown category";
 
         // Check if this category has a budget
         const budgetEntry = categoryBudgets?.find(
@@ -162,7 +164,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
   };
 
   const drawerList = (
-    <Box sx={{ width: '100%' }} role="presentation">
+    <Box sx={{ width: "100%" }} role="presentation">
       <Box
         sx={{
           backgroundColor: "#130037",
@@ -176,7 +178,7 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
       >
         <Box display="flex">
           <Chip
-            avatar={<Avatar alt="username" src="" />}
+            avatar={<Avatar alt="username" src={userPhoto} />}
             label={userName}
             variant="outlined"
             sx={{
