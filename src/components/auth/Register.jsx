@@ -83,10 +83,10 @@ const Register = () => {
         setIsSubmitting(false);
         return;
       }
-      setSuccessMessage("Registration successful! Redirecting to login...");
+      setSuccessMessage(response.data.message);
       setTimeout(() => {
         navigate("/sign-in");
-      }, 3000);
+      }, 5000);
     } catch (err) {
       console.error("Registration failed:", err);
       alert("Something went wrong. Try again!");

@@ -86,13 +86,9 @@ const Login = () => {
       navigate("/"); // redirect to homepage
     } catch (err) {
       console.error("Login failed:", err);
-      if (err.response?.data?.message?.includes("Google")) {
-        setError(
-          "This account was created via Google Sign-In. Please log in with Google."
-        );
-      } else {
-        setError("Login failed. Please check your credentials.");
-      }
+      setError(
+        err.response.data.message
+      );
     } finally {
       setIsSubmitting(false);
     }
