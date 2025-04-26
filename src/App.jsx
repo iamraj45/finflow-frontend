@@ -8,8 +8,7 @@ import { CategoryProvider } from "./context/CategoryContext";
 import BudgetPage from "./pages/BudgetPage";
 import { BudgetProvider } from "./context/BudgetContext";
 import ResetPassword from "./components/auth/ResetPassword";
-import VerifyEmailPage from './components/VerifyEmailPage';
-
+import VerifyEmailPage from "./components/auth/VerifyEmailPage";
 
 function App() {
   return (

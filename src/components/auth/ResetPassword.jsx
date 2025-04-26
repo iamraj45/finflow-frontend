@@ -48,11 +48,12 @@ const ResetPassword = () => {
       const res = await axios.post(`${apiUrl}/api/auth/reset-password`, null, {
         params: { token, newPassword },
       });
-      setMessage("Password reset successful. Redirecting to login...");
+      console.log(res.data);
+      setMessage(res.data.message);
       setTimeout(() => navigate("/sign-in"), 2000);
     } catch (err) {
       setError(
-        err.response?.data ||
+        res.data.message ||
           "Failed to reset password. Link may be invalid or expired."
       );
     } finally {
