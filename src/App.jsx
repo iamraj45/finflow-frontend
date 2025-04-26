@@ -47,7 +47,7 @@ function App() {
         <Route path="/sign-in" element={<Login />} />
         <Route path="/sign-up" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/verifyEmail" element={<VerifyEmailPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Routes>
     </Router>
   );
