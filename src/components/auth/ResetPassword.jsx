@@ -84,61 +84,84 @@ const ResetPassword = () => {
           maxWidth: "100%",
           borderRadius: 3,
           boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
+          textAlign: "center",
         }}
       >
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          gutterBottom
-          textAlign="center"
-        >
-          Reset Your Password
-        </Typography>
+        {/* IF token is missing, show only error */}
+        {!token ? (
+          <>
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              gutterBottom
+              color="error"
+            >
+              Invalid or Expired Link
+            </Typography>
+            <Typography mt={2}>
+              Please request a new password reset link.
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{ mt: 4 }}
+              onClick={() => navigate("/sign-in")}
+            >
+              Go to Sign In
+            </Button>
+          </>
+        ) : (
+          <>
+            {/* This is your normal form when token is present */}
+            <Typography variant="h5" fontWeight="bold" gutterBottom>
+              Reset Your Password
+            </Typography>
 
-        <TextField
-          label="New Password"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
+            <TextField
+              label="New Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
 
-        <TextField
-          label="Confirm Password"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          error={confirmPassword && newPassword !== confirmPassword}
-          helperText={
-            confirmPassword && newPassword !== confirmPassword
-              ? "Passwords do not match"
-              : ""
-          }
-        />
+            <TextField
+              label="Confirm Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              error={confirmPassword && newPassword !== confirmPassword}
+              helperText={
+                confirmPassword && newPassword !== confirmPassword
+                  ? "Passwords do not match"
+                  : ""
+              }
+            />
 
-        {error && (
-          <Typography color="error" mt={1}>
-            {error}
-          </Typography>
+            {error && (
+              <Typography color="error" mt={1}>
+                {error}
+              </Typography>
+            )}
+            {message && (
+              <Typography color="primary" mt={1}>
+                {message}
+              </Typography>
+            )}
+
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 3 }}
+              disabled={!passwordsMatch || isSubmitting}
+              onClick={handleReset}
+            >
+              {isSubmitting ? "Resetting..." : "Reset Password"}
+            </Button>
+          </>
         )}
-        {message && (
-          <Typography color="primary" mt={1}>
-            {message}
-          </Typography>
-        )}
-
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ mt: 3 }}
-          disabled={!passwordsMatch || isSubmitting}
-          onClick={handleReset}
-        >
-          {isSubmitting ? "Resetting..." : "Reset Password"}
-        </Button>
       </Paper>
     </Box>
   );
