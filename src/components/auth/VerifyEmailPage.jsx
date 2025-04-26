@@ -32,6 +32,7 @@ export default function VerifyEmailPage() {
         if (res.data.status) {
           setStatus("success");
           setMessage(res.data.message);
+          alert("Email verified successfully");
           navigate("/sign-in");
         } else {
           setStatus("error");
