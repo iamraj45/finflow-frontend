@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import React, { useContext, useEffect, useState } from "react";
-import { CategoryContext } from "../context/CategoryContext";
 import { Link } from "react-router-dom";
+import { CategoryContext } from "../context/CategoryContext";
 
 function generateColors(count) {
   const colors = [];

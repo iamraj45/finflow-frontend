@@ -202,6 +202,7 @@ export default function Home() {
             pl: isMobile ? 0 : 2,
             pt: isMobile ? 2 : 0,
             width: isMobile ? "100%" : "50%",
+            display: isMobile ? "none" : "block",
           }}
         >
           <SpendingCharts

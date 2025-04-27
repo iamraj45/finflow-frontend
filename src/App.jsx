@@ -9,6 +9,7 @@ import BudgetPage from "./pages/BudgetPage";
 import { BudgetProvider } from "./context/BudgetContext";
 import ResetPassword from "./components/auth/ResetPassword";
 import VerifyEmailPage from "./components/auth/VerifyEmailPage";
+import Charts from "./pages/Charts";
 
 function App() {
   return (
@@ -39,6 +40,18 @@ function App() {
               <BudgetProvider>
                 <CategoryProvider>
                   <BudgetPage />
+                </CategoryProvider>
+              </BudgetProvider>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/charts"
+          element={
+            <PrivateRoute>
+              <BudgetProvider>
+                <CategoryProvider>
+                  <Charts />
                 </CategoryProvider>
               </BudgetProvider>
             </PrivateRoute>

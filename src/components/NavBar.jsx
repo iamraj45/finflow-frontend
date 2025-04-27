@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useContext } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Badge,
-  Popover,
-  Alert,
-  Stack,
-  Chip,
-  Avatar,
-} from "@mui/material";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import LogoutIcon from "@mui/icons-material/Logout";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import {
+  Alert,
+  AppBar,
+  Avatar,
+  Badge,
+  Box,
+  Chip,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Popover,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AppLogo from "../assets/logo.png";
-import { useNavigate, Link } from "react-router-dom";
 import { CategoryContext } from "../context/CategoryContext";
 
 const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
@@ -164,10 +164,13 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
     navigate("/sign-in");
   };
 
+  const isMobile = useMediaQuery("(max-width:768px)");
+
   const drawerList = (
     <Box sx={{ width: "100%" }} role="presentation">
       <Box
         sx={{
+          width: isMobile ? "100%" : "200px",
           backgroundColor: "#130037",
           color: "white",
           padding: "0 35px",
@@ -217,6 +220,33 @@ const Navbar = ({ expenses, categoryBudgets, totalBudget, overBudget }) => {
             <PersonOutlineIcon />
           </IconButton>
           <ListItemText sx={{ paddingLeft: "20px" }} primary="My Profile" />
+        </ListItem>
+
+        <ListItem
+          sx={{
+            padding: "10px 20px",
+            cursor: "pointer",
+            display: isMobile ? "" : "none",
+          }}
+          onClick={() => {
+            navigate("/charts");
+            setDrawerOpen(false);
+          }}
+        >
+          <IconButton
+            size="small"
+            sx={{
+              backgroundColor: "#130037",
+              color: "white",
+              ml: 1,
+              "&:hover": {
+                backgroundColor: "#2d005c",
+              },
+            }}
+          >
+            <BarChartIcon />
+          </IconButton>
+          <ListItemText sx={{ paddingLeft: "20px" }} primary="Charts" />
         </ListItem>
 
         <ListItem
