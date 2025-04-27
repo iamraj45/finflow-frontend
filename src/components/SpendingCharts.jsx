@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import React, { useContext, useEffect, useState } from "react";
 import { CategoryContext } from "../context/CategoryContext";
@@ -128,8 +128,10 @@ const SpendingCharts = ({
     };
   });
 
+  const isMobile = useMediaQuery("(max-width:768px)");
+
   return (
-    <Box sx={{ textAlign: "left", p: 0, width: '100%' }}>
+    <Box sx={{ textAlign: "left", p: 0, width: "100%" }}>
       <Typography variant="h5" sx={{ mb: 2.5 }}>
         Monthly Spendings
       </Typography>
@@ -153,12 +155,14 @@ const SpendingCharts = ({
               >
                 <span
                   style={{
-                    color: percentageUsed >= 90 ? "red" : "var(--color-secondary)", 
-                    fontWeight: 'bold',
+                    color:
+                      percentageUsed >= 90 ? "red" : "var(--color-secondary)",
+                    fontWeight: "bold",
                   }}
                 >
                   {percentageUsed.toFixed(2)}%
-                </span>{" "} of your budget has been utilized.
+                </span>{" "}
+                of your budget has been utilized.
                 <Link
                   to="/budget"
                   style={{ textDecoration: "none", fontWeight: "bold" }}
@@ -197,7 +201,6 @@ const SpendingCharts = ({
               borderRadius: 2,
               boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
               paddingY: 1,
-              // paddingX: 2,
               backgroundColor: "#fff",
               transition: "all 0.2s",
               "&:hover": {
@@ -229,6 +232,11 @@ const SpendingCharts = ({
                   color: "#d32f2f", // Red for over budget
                 },
               ]}
+              slotProps={{
+                tooltip: {
+                  trigger: isMobile ? "item" : "axis",
+                },
+              }}
             />
           </Box>
 
@@ -250,28 +258,31 @@ const SpendingCharts = ({
           >
             <PieChart
               height={250}
-              width={250} 
-              sx={{mx: 2}}
+              width={250}
+              sx={{ mx: 2 }}
               series={[
                 {
-                  arcLabel: (item) => `${item.value.toFixed(0)}%`, 
+                  arcLabel: (item) => `${item.value.toFixed(0)}%`,
                   arcLabelMinAngle: 20, // Minimum angle before showing labels
                   data: categoryData.map((entry, index) => ({
                     id: entry.category,
                     value: entry.percentage,
                     label: entry.category,
-                    color: COLORS[index % COLORS.length], 
+                    color: COLORS[index % COLORS.length],
                   })),
                   highlightScope: { fade: "global", highlight: "item" }, // Highlight functionality for slices
                   faded: {
                     innerRadius: 30,
                     additionalRadius: -30,
                     color: "gray",
-                  }, 
+                  },
                 },
               ]}
               slotProps={{
                 legend: { hidden: false },
+                tooltip: {
+                  trigger: isMobile ? "item" : "item",
+                },
               }}
             />
           </Box>
@@ -309,7 +320,8 @@ const SpendingCharts = ({
                   },
                 ]}
                 tooltip={{
-                  trigger: "item",
+                  trigger: isMobile ? "item" : "item",
+                  itemName: isMobile ? "click" : undefined,
                   formatter: ({ data }) =>
                     `Date: ${data.date}<br/>Amount: ₹${data.Amount}${
                       data.isMax ? " (Highest)" : ""
