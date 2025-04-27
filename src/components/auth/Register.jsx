@@ -282,7 +282,7 @@ const Register = () => {
                 Continue with Google
               </Button>
             </Box>
-            <Box sx={{ display: "flex", gap: 2 }}>
+            {/* <Box sx={{ display: "flex", gap: 2 }}>
               <Box sx={{ flex: 1 }}>
                 <Button variant="outlined" fullWidth startIcon={<Facebook />}>
                   Facebook
@@ -293,7 +293,7 @@ const Register = () => {
                   LinkedIn
                 </Button>
               </Box>
-            </Box>
+            </Box> */}
           </Box>
 
           <Typography mt={4} align="center">

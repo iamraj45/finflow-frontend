@@ -204,7 +204,27 @@ const MyExpenses = ({
             <IconButton
               size="small"
               onClick={handleOpen}
-              sx={commonIconButtonStyles}
+              sx={{
+                ...commonIconButtonStyles,
+                ...(isMobile && {
+                  // Mobile-specific styles here
+                  position: "fixed",
+                  bottom: "24px",
+                  right: "24px",
+                  zIndex: 1000,
+                  width: "50px",
+                  height: "50px",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                  backgroundColor: "var(--color-secondary)",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#2d005c",
+                  },
+                  "& .MuiSvgIcon-root": {
+                    fontSize: "1.8rem",
+                  },
+                }),
+              }}
             >
               <AddIcon />
             </IconButton>
