@@ -33,7 +33,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resetEmail, setResetEmail] = useState("rk@gmail.com");
-  const [resetMessage, setResetMessage] = useState("");
+  const [resetMessage, setResetMessage] = useState(null);
   const [openResetDialog, setOpenResetDialog] = useState(false);
   const [resetEmailError, setResetEmailError] = useState("");
   const [isResetting, setIsResetting] = useState(false);
@@ -86,9 +86,7 @@ const Login = () => {
       navigate("/"); // redirect to homepage
     } catch (err) {
       console.error("Login failed:", err);
-      setError(
-        err.response.data.message
-      );
+      setError(err.response.data.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -137,7 +135,7 @@ const Login = () => {
   };
 
   const handlePasswordResetLink = async () => {
-    setResetMessage("");
+    setResetMessage(null);
     setError("");
     setResetEmailError("");
 
@@ -154,17 +152,25 @@ const Login = () => {
     setIsResetting(true);
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${apiUrl}/api/auth/request-password-reset?email=${resetEmail}`
       );
-      setResetMessage(
-        `Password reset link sent to ${resetEmail}. Please check your mail`
-      );
+      console.log(response.data);
+      const message = response.data.message;
+      if (message.includes("not registered")) {
+        setResetMessage({
+          text: message,
+          color: "error",
+        });
+      } else {
+        setResetMessage({
+          text: message,
+          color: "success",
+        });
+      }
       handleCloseResetDialog();
     } catch (err) {
-      setResetEmailError(
-        "Failed to send link to reset password. Is the email registered with FinFlow?"
-      );
+      setResetEmailError("Failed to send link to reset password.");
     } finally {
       setIsResetting(false);
     }
@@ -308,8 +314,8 @@ const Login = () => {
             </Link>
           </Box>
           {resetMessage && (
-            <Typography variant="body2" color="success" mt={1}>
-              {resetMessage}
+            <Typography variant="body2" color={resetMessage.color} mt={1}>
+              {resetMessage.text}
             </Typography>
           )}
 

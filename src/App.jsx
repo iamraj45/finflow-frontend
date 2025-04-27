@@ -8,8 +8,7 @@ import { CategoryProvider } from "./context/CategoryContext";
 import BudgetPage from "./pages/BudgetPage";
 import { BudgetProvider } from "./context/BudgetContext";
 import ResetPassword from "./components/auth/ResetPassword";
-import VerifyEmailPage from './components/VerifyEmailPage';
-
+import VerifyEmailPage from "./components/auth/VerifyEmailPage";
 
 function App() {
   return (
@@ -48,7 +47,7 @@ function App() {
         <Route path="/sign-in" element={<Login />} />
         <Route path="/sign-up" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/verifyEmail" element={<VerifyEmailPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Routes>
     </Router>
   );
