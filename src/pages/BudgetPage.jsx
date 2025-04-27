@@ -46,15 +46,12 @@ export default function BudgetPage() {
     categories: false,
     new: false,
   });
-  const isMobile = useMediaQuery("(max-width:768px)");
+  const [overBudget, setOverBudget] = useState({
+    total: false,
+    categories: [],
+  });
 
-  const BudgetPage = () => {
-    const { enqueueSnackbar } = useSnackbar();
-    const handleBudgetSave = () => {
-      enqueueSnackbar("Budget saved successfully!");
-    };
-    return <button onClick={handleBudgetSave}>Save Budget</button>;
-  };
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   useEffect(() => {
     if (totalBudget !== null) setLocalTotalBudget(totalBudget);
@@ -63,6 +60,26 @@ export default function BudgetPage() {
   useEffect(() => {
     setLocalCategoryBudgets(categoryBudgets);
   }, [categoryBudgets]);
+
+  useEffect(() => {
+    if (!expenses || totalBudget === null) return;
+
+    const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const categoryTotals = expenses.reduce((acc, exp) => {
+      acc[exp.categoryId] = (acc[exp.categoryId] || 0) + exp.amount;
+      return acc;
+    }, {});
+
+    const crossedCategories = (categoryBudgets || []).filter((catBud) => {
+      const spent = categoryTotals[catBud.categoryId] || 0;
+      return spent > catBud.budget;
+    });
+
+    setOverBudget({
+      total: totalSpent > totalBudget,
+      categories: crossedCategories.map((cat) => cat.categoryId),
+    });
+  }, [expenses, totalBudget, categoryBudgets]);
 
   const handleCategoryBudgetChange = (index, value) => {
     const updated = [...localCategoryBudgets];
@@ -126,7 +143,12 @@ export default function BudgetPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar
+        expenses={expenses}
+        categoryBudgets={categoryBudgets}
+        totalBudget={totalBudget}
+        overBudget={overBudget}
+      />
       <Box
         sx={{
           display: "flex",
@@ -185,12 +207,12 @@ export default function BudgetPage() {
                     </InputAdornment>
                   }
                 />
-                <Typography mt={1}>
-                  You have spent <span>₹ {amountSpent}</span> this month.
-                </Typography>
               </FormControl>
             </Stack>
-            <Typography variant="h6" mt={4} gutterBottom>
+            <Typography mt={2}>
+              You have spent <span>₹{amountSpent}</span> this month.
+            </Typography>
+            <Typography variant="h6" mt={3} gutterBottom>
               Budget Per Category
             </Typography>
             {localCategoryBudgets.length === 0 ? (
@@ -203,13 +225,16 @@ export default function BudgetPage() {
                   You have not added budget for any categories yet.
                 </Typography>
                 <Button
-                  sx={{ mt: 1 }}
+                  sx={{ mt: 1, width: "50%" }}
                   variant="contained"
                   onClick={handleSaveAllBudgets}
                   disabled={loading.total || loading.categories}
                   startIcon={
                     (loading.total || loading.categories) && (
-                      <CircularProgress size={20} />
+                      <CircularProgress
+                        size={20}
+                        color="var(--color-primary)"
+                      />
                     )
                   }
                 >
@@ -292,13 +317,16 @@ export default function BudgetPage() {
                 </Stack>
 
                 <Button
-                  sx={{ mt: 1 }}
+                  sx={{ mt: 1, width: "50%" }}
                   variant="contained"
                   onClick={handleSaveAllBudgets}
                   disabled={loading.total || loading.categories}
                   startIcon={
                     (loading.total || loading.categories) && (
-                      <CircularProgress size={20} />
+                      <CircularProgress
+                        size={20}
+                        color="var(--color-primary)"
+                      />
                     )
                   }
                 >
@@ -380,7 +408,14 @@ export default function BudgetPage() {
                   variant="contained"
                   onClick={handleSaveNewBudgets}
                   disabled={loading.new}
-                  startIcon={loading.new && <CircularProgress size={20} />}
+                  startIcon={
+                    loading.new && (
+                      <CircularProgress
+                        size={20}
+                        color="var(--color-primary)"
+                      />
+                    )
+                  }
                   sx={{ flex: 1 }}
                 >
                   Save
